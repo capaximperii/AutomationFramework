@@ -1,0 +1,58 @@
+[Variables hack]
+rank = 1
+desc = assigning variable cheat code
+commands = 	[
+		"${WINIMG}=Echo /tmp/firefox.png",
+		"${PLAY}=Echo /tmp/play.pat",
+		"${PAUSE}=Echo /tmp/pause.pat",
+		"${SKIP}=Echo /tmp/skip-ad.pat",
+		"${THEATER}=Echo /tmp/theater.pat"
+		]
+[Download test]
+rank = 2
+desc = download pattern files from ftp
+commands = [
+		"Ftp download 192.168.1.93 anonymous anonymous /tmp/play.pat /youtube/play.pat",
+		"Ftp download 192.168.1.93 anonymous anonymous /tmp/pause.pat /youtube/pause.pat",
+		"Ftp download 192.168.1.93 anonymous anonymous /tmp/skip-ad.pat /youtube/skip-ad.pat",
+		"Ftp download 192.168.1.93 anonymous anonymous /tmp/theater.pat /youtube/theater.pat"
+	   ]
+[Start firefox only if it is dead]
+rank = 3
+desc = firefox start
+commands = ["Sleep 10", "Process dead firefox", "Process spawn firefox"]
+
+[Auto Key test start firefox]
+rank = 3
+desc = Keyboard automation test
+commands = ["Sleep 10", "${WIN}=Desktop windowid firefox","Desktop windowfocus ${WIN}", "Desktop keypress F6", "Desktop type https://www.youtube.com/watch?v=D0MVjeT_Zm0", "Desktop keypress Return"]
+
+[screenshot window test]
+rank = 4
+desc = click a screenshot of a window
+commands = ["${WIN}=Desktop windowid firefox","Desktop windowfocus ${WIN}", "Desktop windowimg ${WINIMG} ${WIN}"]
+
+[Mouse auto skip-ad]
+rank = 5
+desc = mouse find and click
+commands = ["Desktop mouseclick ${WIN} ${WINIMG} ${SKIP}"]
+
+[update screenshot window changed]
+rank = 6
+desc = update screenshot
+commands = ["Sleep 10", "Desktop windowimg ${WINIMG} ${WIN}"]
+
+[Mouse auto pause]
+rank = 7
+desc = mouse find and click
+commands = ["Sleep 10", "Desktop mouseclick ${WIN} ${WINIMG} ${PAUSE}"]
+
+[update screenshot window changed]
+rank = 9
+desc = update screenshot
+commands = ["Sleep 10", "Desktop windowimg ${WINIMG} ${WIN}"]
+
+[Mouse auto play]
+rank = 10
+desc = mouse find and click
+commands = ["Sleep 10", "Desktop mouseclick ${WIN} ${WINIMG} ${PLAY}"]

@@ -1,0 +1,921 @@
+<head>
+<LINK rel="stylesheet" type="text/css" href="UserGuide.css">
+</head>
+
+AutomationFramework: User Guide
+================================
+
+
+*   [Overview](#overview)
+    *   [Purpose](#purpose)
+    *   [Background](#background)
+    *   [Directory Layout](#dirlayout)
+    *   [Copying and use](#copyright)
+    *   [Disclaimer of Warranty](#warranty)
+    *   [Limitation of liability](#liability)
+*   [Installation](#installation)
+    *   [Hardware requirements](#hardware)
+    *   [Software prerequisites](#software)
+    *   [Quickstart](#quickstart)
+    *   [Plugins Install and update](#plugininstall)
+    *   [Plugins uninstall](#pluginuninstall)
+    *   [Uninstall](#uninstall)
+    *   [Dependencies](#dependency)
+*   [Configuration](#configuration)
+    *   [Test Configuration file](#testconfigfile)
+    *   [Configuration pitfalls and notes](#confignotes)
+    *   [Default values](#defaults)
+*   [Deployment guide](#deploymentguide)
+    *   [How to deploy and use the AutomationFramework?](#deployment)
+        *    [How to add a command?](#commandadd)
+        *    [How to set and use variables?](#variablesuse)
+        *    [What are built-in variables?](#builtinvars)
+        *    [How to synchronize order of test cases on different machines?](#dependscmd)
+        *    [How to repeat test cases?](#repeatcmd)
+        *    [How to skip test cases?](#skipcmd)
+        *    [How to achieve loops and if-then-else type logic?](#tricks)
+        *    [Future enhancements under consideration](#configfuture)
+*   [Interfaces for access](#ui)
+    *   [Command Line](#text)
+	*   [Commands shipped](#commandshipped)
+	*   [NCurses](#ncurses)
+	*   [Miscellaneous](#misc)
+    *   [Server based client installer](#colonize)
+    *   [Web based statistics](#stats)
+*   [Test results](#testresults)
+    *   [Log files](#logs)
+    *   [HTML test report](#superreport)
+*   [Extras](#extras)
+    *   [GUI automation](#guiautomation)
+    *   [Selenium automation](#selenium)
+*   [Bibliography](#bibliography)
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+
+<h2 id="overview">Overview</h2>
+
+AutomationFramework is intended to be as independent of its platform and commands as possible while still retaining the usability that is required of a multi-client framework. The main philosophy is to keep as few commands built-in while everything else can be added as plugins. The plugins themselves are easy to write and follow the same structure as will be illustrated in this document.   
+  
+The AutomationFramework consists of two main components:  
+
+*   An Automation Server  
+*   The Automation agents running on various machines  
+
+
+<h3 id="purpose">Purpose</h3>
+
+The purpose of the AutomationFramework is to provide the test engineers with an easy extensible language, to formulate as well as run repeated tests on linux clients. By giving the power of desigining scenarios and test cases to each test engineer, the system aims to create bug free software. Also this can be seen as a tool to formalize the bug reports with scenarios expressed as a sequence of CLI commands.  
+Therefore it is possible to have purely blackbox or whitebox or an intermediate kind of testing performed while increasing the productivity as well as the knowledge of the tester.  
+
+<h3 id="background">Background</h3>
+
+The current automation frameworks are namesake, with scripts that have much dependency on the developer to add features or code test cases. The number of bugs found from an automated system does not compare favourably with a manual tester and in that measure, they should be considered redundant.  
+
+
+<h3 id="dirlayout">Directory Layout</h3>
+
+[![IMAGE ALT TEXT HERE](./layout.png)](Directory layout)
+
+<h3 id="copyright">Copying</h3>
+
+As laid out in the Mozilla Public licence <https://www.mozilla.org/MPL/2.0/>  
+*Note: [Thirdparty](#bibliography) components are properties of their respective owners and may follow separate licensing scheme*
+
+<h3 id="warranty">Disclaimer of Warranty</h3>
+Covered Software is provided under this License on an *as is* basis, without warranty of any kind, either expressed, implied, or statutory, including, without limitation, warranties that the Covered Software is free of defects, merchantable, fit for a particular purpose or non-infringing. The entire risk as to the quality and performance of the Covered Software is with You. Should any Covered Software prove defective in any respect, You (not any Contributor) assume the cost of any necessary servicing, repair, or correction. This disclaimer of warranty constitutes an essential part of this License. No use of any Covered Software is authorized under this License except under this disclaimer.
+
+<h3 id="liability">Limitation of liability</h3>
+Under no circumstances and under no legal theory, whether tort (including negligence), contract, or otherwise, shall any Contributor, or anyone who distributes Covered Software as permitted above, be liable to You for any direct, indirect, special, incidental, or consequential damages of any character including, without limitation, damages for lost profits, loss of goodwill, work stoppage, computer failure or malfunction, or any and all other commercial damages or losses, even if such party shall have been informed of the possibility of such damages. This limitation of liability shall not apply to liability for death or personal injury resulting from such party’s negligence to the extent applicable law prohibits such limitation. Some jurisdictions do not allow the exclusion or limitation of incidental or consequential damages, so this exclusion and limitation may not apply to You.
+ 
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+<h2 id="installation">Installation</h2>
+
+<h3 id="hardware">Hardware requirements</h3>
+The software should be able to run on any hardware that has a dependable python port and a reasonable linux distribution. There are no special requirements and the software has been so designed to have minimal dependencies and light weight.  
+
+<h3 id="software">Software Pre-requisites</h3>
+*  [Python](http://python.org) 2.6 or 2.7
+*  Dependencies are part of core linux installs and are detailed [here](#dependency) 
+
+<h3 id="quickstart">Quickstart</h3>
+*  Uncompress the server.tgz and start server as mentioned [here](#deployment). 
+*  Edit the default.ini in config directory to include some basic pilot test like a [Sleep](#configuration).
+*  Make sure SSH is enabled on all the client machines, then install client on the machines using the server based [installer](#colonize).
+*  Check server console to see clients checking in and [reports](#superreport) generated. 
+
+*<B>Congratulations. You have successfully set up the automation server!</B>* 
+
+<h3 id="uninstall">Uninstall</h3>
+To uninstall the AutomationFramework, delete the root of the package and the log files that are created in the /tmp directory. The AutomationFramework leaves no other legacy files or metadata.
+
+
+<h3 id="plugininstall">Plugins install and update</h3>
+Plugins come packaged with the AutomationFramework. But since, over time bugs may be uncovered mostly in plugins and to avoid versioning of the AutomationFramework itself, it was thought advisable to have a system wherein plugins can be updated at runtime using a simple HTTP/FTP public repository.  
+This is due to the fact that the AutomationFramework itself has minimal commands, and therefore the bugs and enhancements will more likely be included in plugins over time. This prevents release of the core engine where nothing is expected to change, instead testers can use existing setups to dynamically update.  
+
+To do this, copy the latest versions of all plugins to an HTTP or FTP repository that is *not* password protected. For example:  
+	http://myintranet.repository.local/latest-plugins/  
+Use the Capability add command to download a plugin, put it as the first test case in all your configuration files
+
+
+	[Plugin update]                                                                               
+	rank = 1                                                                                      
+	desc = Update plugins to latest	                                                              
+	commands = ["Capability add http://myintranet.repository.local/latest-plugins Browser File IP"]   
+
+
+This will install the Browser, File and IP plugins.  
+
+<h3 id="pluginuninstall">Plugins uninstall</h3>
+It might in some situations be advisable to uninstall all plugins when the test cases have finished execution. This can be achieved by:
+
+
+	[Plugin remove]
+	rank = 100
+	desc = Remove plugins	
+	commands = ["Capability remove"]
+
+*Warning:Removes all plugins, there is no facility to remove individual plugins*
+
+<h3 id="dependency">Dependencies</h3>
+<br>
+<table border=1 cellpadding=20  cellspacing=20>
+<tr> <th> Component / Library </th> <th> Version                                                             </th> <th> Comment              </th> </tr>
+<tr> <td> libc6               </td> <td> >=2.4                                                               </td> <td> Standard C library   </td> </tr>
+<tr> <td> libpng12            </td> <td> >=1.2.13-4                                                          </td> <td> PNG library          </td> </tr>
+<tr> <td> libX11-6            </td> <td> compatible version with X running on target system                  </td> <td> X11 client library   </td> </tr>
+<tr> <td> libxtst-6           </td> <td> compatible version with X running on target system                  </td> <td> Standard C library   </td> </tr>
+<tr> <td> xautomation         </td> <td> 1.09                                                                </td> <td> Xautomation kit X11  </td> </tr>
+
+</table>
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+
+<h2 id="configuration">Configuration</h2>
+
+<h3 id="testconfigfile">Test Configuration file</h3>
+AutomationFramework uses the ini files in the config directory when run as server-client to provision test cases to the client. 
+A typical configuration entry consists of:  
+
+*   Name - Is the test case name as will be used in the reports.  
+*   Desc - Is the test case description, a small description for more verbosity in the reports.  
+*   rank - This specifies the order of the execution of the test cases. 1 being the first.  
+*   commands - This is a list of commands, that are executed to realize the test case. The syntax is in the form of a python list data structure.  
+
+An example test case would be:  
+
+
+	[Dummy test]
+	desc = dummy test operations
+	rank = 10
+	commands = ["Process alive X", "Process kill X"]
+
+
+Each test case can consist of multiple commands that execute sequentially. But a test case aborts execution if a command fails. So in the above example if Process alive X fails, the next commands that follow it do not execute and the execution moves to the next test case.  
+	
+Sometimes, like in a server client scenario may sometimes require different clients to get different test cases, there is a facility given to be able to specify a different config file for either the subnet or a particular ip address.  
+As an example consider that you have 2 subnets 192.168.10.* and 192.168.20.* and you wish to provision 2 different copies of test cases to each.
+In this case create 2 configuration files:
+  
+*   192.168.10.\*.ini  
+*   192.168.20.\*.ini  
+
+The AutomationFramework will take care of the rest.  
+Further if you wish, you could create another file 192.168.10.12.ini for specifically a machine matching that ip address.  
+Exact ip address match has higher priority over the subnet and finally when no match is found, default.ini is used.  
+
+
+<h3 id="confignotes">Configuration pitfalls and notes</h3>
+
+*  Listed here are a few things to consider in case your deployment does not behave as expected:  
+
+       *  The ini file is read everytime a new client checks in. This allows the facility to edit the file and reflect changes without having to restart the automation server	 
+       *  The  file *default.ini* should always be present. Deleting this file can have undefined consequences.
+       *  The file *backup.ini* is provided as an example illustration of how different commands can be invoked.
+       *  Since IP address matching scheme relies on the client ip, the AutomationFramework currently will not work in cases such as NAT
+       *  More than one test case can have the same rank, in this case the order in which they execute is not defined with respect to each other, though they will still execute after other test cases that have higher rank
+       *  The test case command data is transfered json encoded. Though there are cases, like iso8859-1 default encoding of MS-Windows text files as opposed to UTF-8 Linux text files that can cause problems. Especially when using different locales and charactersets involving special characters like umlaut.
+       *  The server is very sensitive to INI file errors and prone to crashing on bad input here. 
+       *  Https is not supported
+       *  It is best advised to have linux line endings to the config files, this can be achieved using:
+
+
+
+			$ dos2unix config/*.ini
+
+
+<h3 id="defaults">Default values</h3>
+
+*  When run as a client of the automation service, the AutomationFramework has a few configurable values, the defaults of which are given below:  
+
+     *  Default INI file to load test cases for a client is *default.ini*
+     *  Timeout for a command to finish execution =  1800 seconds  
+     *  Rank of a Test case when not specified = 10  
+     *  Default port that the server listens on = 8080
+
+*Note: These values and features are applicable only when running as client. In standalone mode, if a command blocks, it will block forever*
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+
+<h2 id="deploymentguide">Deployment Guide</h2>
+This section describes the best practices and some useful features that make this a powerful tool to automate day to day tasks.
+It is recommended to have the plugins on a public server and updated on runtime as explained later to avoid release cycles for the AutomationFramework itself.
+
+<h3 id="deployment">How to deploy and use the AutomationFramework?</h3>
+There is a utility provided to check system compatibility and dependencies. It can be invoked using:
+
+	
+	$ python -B agent/cli/bin/sanity.py
+
+
+The server can be started using:
+
+	
+	$ python service/AutomationServer.py
+
+
+To start the client:
+
+
+	$ python agent/AutomationAgent.py server <httpurl> [ --debug ]
+	httpurl: The url where the server is listening
+	--debug: Enable extra debug logs to be uploaded to the server
+
+Alternately, You can use the [client installer](#colonize) to start the client from the server using SSH.
+	
+<h4 id="commandadd">How to add a command?</h4>
+1.   Use the simple Echo command as template and make a copy.  
+2.   Rename the copy as you want the command name to be. For example, if the command is named Foobar, then the file is renamed Foobar.py  
+3.   Change the name of the do\_Echo function to do\_Foobar  
+4.   Use the superb tutorial provided <http://docopt.org/> to make your own CLI command.  
+
+<h4 id="variablesuse">How to set and use variables?</h4>
+In general, Variables can be set using the Echo command:  
+	
+
+	[Variable setting example]
+	desc = Illustrates how to set a  variable
+	rank = 1
+	commands = ["${MY_VAR}=Echo foobar"]
+
+
+This example sets the value of MY_VAR to foobar.   
+Alternately if you have written a plugin that returns an output that you want to save to a variable and use later, then  
+
+
+	[Variable setting example]                                       
+	desc = Illustrates how to set a  variable using a custom plugin     
+	rank = 1                                                        
+	commands = ["${MY_VAR}=MyCommand <Myarguments>"]    
+
+
+Variables can be used in a command in place of real arguments or appended with strings or numbers.
+
+
+	[Variable using example]                         
+	desc = Illustrates how to use a  variable            
+	rank = 10                                        
+	commands = ["Ping ${SERVER_IP}"]                    
+
+<h4 id="builtinvars">What are built-in variables?</h4>
+
+
+	${SERVER} - Is the address of the Automation server
+	${IPADDRESS} - Is the ipadress where the agent is running
+	${HOSTNAME} - Is the hostname of the machine where the agent is running
+	${CID} - Is the client ID assigned to the machine where the agent is running
+	${LOOP} - Is the repetition number. Useful to append to a generated file name like a screenshot per iteration  
+
+
+<h4 id="dependscmd">How to synchronize the order of test cases on different machines?</h4>
+The Depends plugin takes care of synchronizing the order of test cases that have dependencies on other machines. For example, before starting a client on Machine A, you may have to wait for server to start on Machine B.  
+To realize this case, you will create 2 INI files one each for server and client.  
+The server (192.168.10.1) configuration file (192.168.10.1.ini) will look like this:
+
+
+	[Server starter]
+	desc = Start the foo server  that processes requests
+	rank = 8
+	commands = ["Server foo start"]
+
+
+The client configuration file (192.168.10.*.ini) will look like this:
+
+
+	[Client starter]                                                  
+	desc = Start the bar client that sends requests to foo server          
+	rank = 1                                                            
+	commands = ["Depends 192.168.10.1 8", "Client bar start"]            
+
+
+Which tells the client that the command depends on 192.168.10.1 machine to finish executing a test case that has rank 8.
+
+<h4 id="repeatcmd">How to repeat test cases?</h4>
+The Repeat command can be used to repeat test cases within rank range, N number of times.
+
+
+	Usage:
+		Repeat <fromrank> <torank> <times>  
+
+* * *
+* * *
+<h4 id="skipcmd">How to skip test cases?</h4>
+The Skip command can be used to skip test cases within a rank range
+
+
+	Usage:
+		Skip <fromrank> <torank>
+
+<h4 id="tricks"> How to achieve loops and if-then-else type logic?</h4>
+As noted [here](#testconfigfile), test  cases abort command execution when a command fails and the execution moves to the next test case. This property, in conjunction with repeat - skip commands can be used to achieve if-then-else and for type loops.
+Consider the following example:
+
+
+	[Trick example]
+	desc = Illustrate if-then-else
+	rank = 1
+	commands = ["Process alive foobar", "Skip 2 2"]
+
+	[I will be skipped if foobar is dead]
+	desc = Dummy test to illustrate skip else case
+	rank = 2
+	commands = ["Sleep 5", "Skip 3 3", "Repeat 1 1 1"]
+	
+	[I will execute only if foobar is alive]
+	desc = Dummy test to illustrate skip if case and loop 1 - 3 forever unless foobar dies  
+	rank = 3
+	commands = ["Sleep 5", "Skip 3 3", "Repeat 1 3 1"]
+
+
+In the  above case, test cases 1 - 3 execute skipping 2, for as long as process *foobar* is alive. Once killed, the loop breaks and test case 2 executes that will explictly skip case 3 thereby breaking the loop.  
+This feature allows for flexible composition of test cases with no prior programming knowlege required on the part of the testers.
+
+<h3 id="configfuture">Future enhancements under consideration</h3>
+
+1.    Just as good programming languages have a try -  catch - finally block, where the finally block is used as a cleanup or sanity block to return the program to a usable state, in a similar way it might prove to be useful to have a list of cleanup commands that follow the commands list of a test case to be run irrespective of whether the test case passed or failed.  
+These commands, delete any files or registries that this test case modified or kill any spawned processes, thus resetting the system to its vanilla state so that one test case should not overlap or pollute the results of its following test cases. By resetting the entropy of the system to initial, the results are guaranteed to not be independent of the tests that ran before.  
+
+The things to be considered are as listed below:  
+
+*   Should the finally list of commands be run irrespective of the test results?
+*   Should the finally commands run only if the tests fail?
+*   Or should there be 2 lists one for successful completion of test case and one in case of a failed run?
+*   Will the tester appreciate added configuration responsibility or will they prefer rebooting the system as opposed to the overhead of keeping track of entropy?
+
+For more information about Finite State Machine or Automata, click [here.](http://en.wikipedia.org/wiki/Finite-state_machine)  
+  
+*For a more Sci-fi take on this subject click [here.](http://en.wikipedia.org/wiki/Chaos_theory)*
+
+2.   X server event record and playback using [xnee.](https://xnee.wordpress.com/)
+
+Since GUI test cases [building](#guiautomation) can be tedious, there is an alternate way provided by xnee that uses the same Xtst library as that of xautomation tools and gives the facility of record and playback of X events. Though the project seems to have stopped development, but depending on the demand or need it might seem there is a case for including a genuine record and playback interface to the framework.  
+
+*    Xnee provides many tools both command line and graphical that allows recording and playback:	
+	*    cnee command line program   
+	*    gnee gui program   
+	*    pnee Gnome panel applet   
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+<h2 id="ui">Interfaces for access</h2>
+This section describes the Command Line Interface, the stats page and the server client communication.
+
+<h3 id="text">Text interface</h3>
+The shell can be started by using:
+
+	$ python agent/cliStart.py shell
+
+There we can use the index number of a command to launch a specific command shell.  
+"?" in each shell gives the usage.  
+
+<h4 id="commandshipped"> Commands Shipped </h4>
+
+
+Depends command
+
+		Usage:                          
+			Depends <ipaddr> <rank>  
+			Depends (-h | --help )
+
+
+	
+Mcast command
+
+	
+		Usage:
+			Mcast server <filepath>
+			Mcast client
+			Mcast (-h | --help )
+
+
+
+Ftp command
+
+	
+		Usage:
+			Ftp upload <server-ip> <user> <password> <localfile> <remotefile>
+			Ftp download <server-ip> <user> <password> <localfile> <remotefile>
+			Ftp (-h | --help )
+
+
+
+Echo command
+
+	
+		Usage:                     
+			Echo ARGS...
+			Echo (-h | --help )  
+	
+
+
+Ping command
+
+	
+		Usage:                    
+			Ping <host>  
+			Ping (-h | --help )  
+
+
+
+Process command
+
+
+		Usage:                                    
+			Process monitor <name> <duration>  
+			Process spawn PATH...
+			Process exec PATH...
+			Process kill <name>
+			Process alive <name>
+			Process dead <name>
+			Process pid <name>
+			Process (-h | --help )
+
+
+
+Browser command
+
+
+		Usage:                                                                
+			Browser clearHistory
+			Browser citrixapp <username> <password> <url> APPNAME...   
+			Browser citrixdesktop <username> <password> <url> APPNAME...   
+			Browser kiosk <url>                                         
+			Browser (-h | --help )
+
+
+
+Sleep command
+
+	
+		Usage:                       
+			Sleep <sec>         
+			Sleep (-h | --help )  
+		
+
+	
+Network command
+
+	
+		Usage:                        
+			Network on
+			Network off
+			Network restart       
+			Network (-h | --help ) 
+
+
+	
+IP command
+
+	
+		Usage:                                   
+			IP equals <interface> <address>
+			IP contains <interface> <address>
+			IP (-h | --help )
+
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+File command
+
+	
+		Usage:                                      
+			File contains <path> <expectation>  
+			File exists <path>
+			File delete <path>
+			File create <path>
+			File purge <path>
+			File wait create <path>
+			File wait delete <path>
+			File wait write  <path>
+			File wait open <path>
+			File wait move <path>
+			File wait access <path>
+
+
+
+Dot1x command
+
+
+	
+		Usage:                                      
+			Dot1x tls <cacert> <clientcert> <privkey> <pkeypass> <authmode>
+			Dot1x peap <cacert> <authmode>        
+			Dot1x reset          
+			Dot1x (-h | --help )  
+
+
+
+Desktop command
+
+	
+		Usage:                                                         
+			Desktop logout
+			Desktop resolution <resolution>
+			Desktop screenshot <filename>
+			Desktop windowid <process>
+			Desktop windowfocus <windowid>
+			Desktop windowclose <windowid>
+			Desktop windowimg <filename> <windowid>
+			Desktop keydown <key>
+			Desktop keyup <key>
+			Desktop keypress <key>
+			Desktop type KEYS...
+			Desktop mouseclick <windowid> <windowimg> PATTERN...    
+			Desktop (-h | --help )
+		
+
+
+Skip command
+
+	
+		Usage:
+			Skip <fromrank> <torank>
+			Skip (-h | --help )
+
+
+
+
+Repeat command
+
+	
+		Usage:                                       
+			Repeat <fromrank> <torank> <times>
+			Repeat (-h | --help )
+
+
+
+Capability command
+
+	
+		Usage:
+			Capability add <url> PLUGINS...
+			Capability remove
+
+
+Timeout command
+
+	
+		Usage:                       
+			Timeout set <nsecs>
+
+
+Selenium command
+
+
+		Usage:
+			Selenium start     <which>    
+			Selenium stop
+			Selenium clickname <which>    
+			Selenium clickcss  <which>    
+			Selenium clickid   <which>    
+			Selenium open      <which>    
+			Selenium fillname  <which> WHAT... 
+			Selenium fillcss   <which> WHAT... 
+			Selenium fillid    <which> WHAT... 
+			Selenium (-h | --help | --version)
+		
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+
+<h4 id="ncurses"> NCurses interface </h4>
+The ncurses interface can be launched using:
+
+	$ python agent/cliStart.py ncurses
+
+
+[![IMAGE ALT TEXT HERE](./ncurses.png)](Ncurses interface)
+
+Use the arrow keys to select and launch a specific command shell.  
+Warning: The ncurses interface is dependent on ncurses libraries installed on the system and is only provided as an add-on with the same functionality as the agent shell, except for more convenient selection using arrow keys than numbers.
+In case this does not work properly, revert to the plain shell.
+
+<h4 id="misc"> Miscellaneous </h4>
+Commands run as server-client mode, are saved in /tmp/automation-history.txt
+It is possible to run the commands from the client machine again, using a utility feature provided:
+
+	
+	$ python agent/cliStart.py file /tmp/automation-history.log
+
+*When run in standalone (not as a slave to a server), no logs are generated in the logfile and no history is saved to the history file*
+	
+<h3 id="colonize">Server based client installer</h3>
+
+From the very inception, the AutomationFramework has been designed to enable automation everywhere possible, including installation on new machines.
+When the server is started, it creates a FIFO called /tmp/colonize
+
+The tester can therefore, at any time add a client information that would allow the server to use SSH session to logon to the machine and install the automation agent and launch it with appropriate parameters.  
+This could also be leveraged via a cron job or automated builds.  
+This requires some preparation, the client tarball should be uploaded on a FTP or HTTP where it can be downloaded from.
+
+Example: 	http://myintranet.repository.local/client.tgz 
+
+		
+		$ echo 192.168.10.51 admin password /opt  url > /tmp/colonize                                             
+		192.168.10.51 : New host where the agent will be installed via SSH                                        
+		admin: Username for ssh session                                                                           
+		password: Password for the username above                                                                 
+		/opt: The destination directory where the package should be installed.                                    
+		url: The url, as explained above, to download the client tarball.
+		Note: It has to be in tar format, not zipped
+
+	
+	Warning: The SSH installer cannot check for errors, and so install can fail without being reported.
+
+
+<h3 id="stats">Web based statistics</h3>
+While the server is running it is possible to check a summary of statistics listed per client.
+From any browser navigate to:
+
+	
+		http://<server-ip or hostname>:8080
+
+
+[![IMAGE ALT TEXT HERE](./stats.png)](Stats page)
+
+***
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+***
+
+
+<h2 id="testresults">Test Results</h2>
+
+The tests run by different agents are accumulated by the server at the end of each run and stored in the form of two artifacts, namely:
+
+*   Log files that record the run of tests  
+*   HTML report that collects test results and a snapshot of the system  
+
+
+<h3 id="logs">Log files</h3>
+The logs are stored in the logs folder in the root of the server directory. They are named using the ip-address of the hosts on which agent was running and a timestamp to distinguish between different runs on the same host.
+
+<h3 id ="superreport">HTML test report</h3>
+The html reports are stored in the html directory and follow the naming as above. When the agent is run with a --debug flag, the report contains the test results and additionally:
+	
+*   Hardware Information
+	*   Desktop Management Interface information
+	*   sysfs-attributes
+	*   Processors
+*   Software Information
+	*   Packages Installed
+*   Log Files and Environment Information
+	*   Sysctl attachment
+	*   dmesg attachment
+	*   cpuinfo attachment
+	*   lspci attachment
+	*   modules attachment
+	*   env attachment
+	*   dmidecode attachment
+	*   modprobe attachment
+	*   lsmod attachment
+	*   lshw attachment
+	*   registry attachment
+
+[![IMAGE ALT TEXT HERE](./superreport.png)](Test Report html formatted)
+
+* * *
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+* * *
+
+<h2 id="extras">Extras</h2>
+In this section, we cover examples that may speed up your learning curve to be able to effectively write and execute test cases.
+
+<h3 id="guiautomation">GUI automation</h3>
+The GUI automation extensively uses X server tools and magic commands like visgrep to make GUI automation as simple as possible. It would be good for you to invest 10 minutes to know how it is done by hand with this [video tutorial.](https://www.youtube.com/watch?v=hMh5dluMRHU)  
+The automation framework uses the same semantics and therefore it is important to start thinking of a GUI application as a state machine.  
+
+[![IMAGE ALT TEXT HERE](./gui.png)](Gui State machine example)
+
+*   As illustrated in this picture, automation involves:
+	*    Letting the framework know what to click on by having an image(converted to a suitable pattern format) of the gui component to be manipulated.
+	*    Making sure the application you want to test is the current active window so that it receives the X events.
+	*    Clicking a screenshot (save it with a suitable name since it can be reused when the application goes back to the same state to avoid redundant screenshot clicking!) of the active window and using pattern image from first step to find the coordinate to click on.
+	*    Finding the coordinates of the gui element to click within the screenshot image(the state of the screen should not have changed in the meantime!)
+	*    Move mouse and click or simply hover or type text.
+
+In the image above, for the sake of example, the picture shows images of 3 gui elements although you could accomplish the same effect with 2 images since a highlighted "Save" menu option in State C has the same coordinates as in State B.  
+An example test case would be as follows:  
+
+
+	[Download pattern files via ftp]
+	rank = 1
+	desc = download pattern files to /tmp
+	commands = [
+		"Ftp download 127.0.0.1 anonymous anonymous /tmp/FileMenuItem.pat FileMenuItem.pat",
+		"Ftp download 127.0.0.1 anonymous anonymous /tmp/SaveMenuItem.pat SaveMenuItem.pat"
+	   ]
+
+	[State A screenshot]
+	rank = 2
+	desc = Screenshot of MyApplication in state A                                    
+	commands = ["${WIN}=Desktop windowid MyApplication","Desktop windowfocus ${WIN}","Desktop windowimg /tmp/StateA.png ${WIN}"]   
+	
+	[Mouse click on File menu]
+	rank = 3
+	desc = mouse find and click file menu
+	commands = ["Desktop mouseclick ${WIN} /tmp/StateA.png /tmp/FileMenuItem.pat"]                
+	
+	[Screenshot window since changed to State B]       
+	rank = 4
+	desc = Screenshot of MyApplication in state B
+	commands = ["Sleep 10", "Desktop windowimg /tmp/StateB.png ${WIN}"]           
+
+	[Mouse click on Save menu]
+	rank = 5
+	desc = mouse find and click save menu
+	commands = ["Desktop mouseclick ${WIN} /tmp/StateB.png /tmp/SaveMenuItem.pat"]                
+
+
+As noted above, State C was redundant and was not done but provides a good example of how your GUI test cases can be structured to achieve results in minimum number of steps.   
+
+<h3 id="selenium">Selenium automation</h3>
+This module uses the packaged selenium python library to give a command line interface that can be used to simulate and test a website or the browser itself. This module though should be considered a beta.  
+The commands allow sending either mouse or keyboard events either to elements selected via name or id or css selector.  
+Here is an example of Google search:
+
+
+		[Selenium tests]
+		desc = Selenium browser test
+		rank = 1                                                                   
+		commands = ["Selenium start firefox", 
+			"Selenium open https://www.google.com",   
+			"Selenium fillname q chaos theory", 
+			"Selenium clickname btnG","Sleep 10", 
+			"Selenium stop"]     
+
+*For other options of Desktop and Selenium commands refer to the [Shipped commands section](#commandshipped)*
+
+
+<h2 id="bibliography">Bibliography</h2>
+<br>
+<table border=1 cellspacing=20 cellpadding=20>
+
+<tr> <th> Component / Library </th> <th> Author / Contact                                                    </th> <th> Comment</th> </tr>
+<tr> <td> Ncurses Menu        </td> <td> <http://blog.skeltonnetworks.com/2010/03/python-curses-custom-menu> </td> <td>   Ncurses agent shell menu   </td> </tr>
+<tr> <td> PyInotify           </td> <td> Sebastien Martini <seb@dbzteam.org>                                 </td> <td>   File monitor using inotify </td> </tr>
+<tr> <td> MSS screenshot      </td> <td> Mickael Schoentgen <contact@tiger-222.fr>                           </td> <td>   Multi-monitor screenshot   </td> </tr>
+<tr> <td> Selenium            </td> <td> <http://www.seleniumhq.org/>                                        </td> <td>   Browser automation         </td> </tr>
+<tr> <td> Docopt              </td> <td> <http://www.docopt.org/>                                            </td> <td>   CLI argument parsing       </td> </tr
+<tr> <td> Console             </td> <td> <http://www.eskimo.com/~jet/python/examples/cmd/> James Thiele      </td> <td>   CLI bootstrap              </td> </tr>
+<tr> <td> Code snippets       </td> <td> <http://stackoverflow.com>                                          </td> <td>   Trouble shooting           </td> </tr>
+<tr> <td> Test report  format </td> <td> Zygmunt Krynicki from checkbox utility                              </td> <td>   Test report template       </td> </tr>
+<tr> <td> Python samples      </td> <td> <http://python.org>                                                 </td> <td>   Everything!                </td> </tr>
+
+</table>

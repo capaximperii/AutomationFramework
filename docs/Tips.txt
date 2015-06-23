@@ -1,0 +1,5 @@
+Screenshots may not work with unity using XShaping:
+https://bugs.launchpad.net/unity-2d/+bug/1081674
+ gconftool --set --type bool /apps/metacity/general/compositing_manager false
+
+gsettings set com.canonical.notify-osd gravity #
