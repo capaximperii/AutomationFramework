@@ -26,6 +26,7 @@ class SeleniumWorker:
 			"fillname"  : self.fillElementName,
 			"fillid"  : self.fillElementId,
 			"fillxpath"  : self.fillElementXPath,
+			"counttags"  : self.countTags,
 			"stop"  :  self.driverUnload
 		}
 		self.exit = False
@@ -39,7 +40,10 @@ class SeleniumWorker:
 
 	def GetCmd(self):
 		reader = open(self.rfilename, 'r')
-		args = shlex.split(reader.readline().strip())
+		string = reader.readline().strip()
+		string = string.replace("'", "\"")
+		#args = shlex.split(string)
+		args = string.split()
 		which = None
 		what  = None
 		if len(args) == 0:
@@ -48,7 +52,7 @@ class SeleniumWorker:
 		if len(args) > 1:
 			which = args[1]
 		if len(args) > 2:
-			what = args[2]
+			what = "".join(args[2:])
 		reader.close()
 		try:
 			if cmdInfo in self.handler.keys():
@@ -62,6 +66,7 @@ class SeleniumWorker:
 
 	def WriteResult(self, result, output):
 		writer = open(self.wfilename, 'w')
+		print "Writing result " + output + result
 		writer.write(result + " " + output + os.linesep)
 		writer.close()
 
@@ -143,6 +148,12 @@ class SeleniumWorker:
 		element = self.findElementXPath(which)
 		element.send_keys(what)
 		return "Pass"
+
+	def countTags(self, which, what):
+		element = self.findElementXPath(which)
+		if len(element) == what:
+			return "Pass"
+		return "Fail"
 
 	def clearElementCSS(self, which, what):
 		element = self.findElementCSS(which)
