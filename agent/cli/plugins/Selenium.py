@@ -25,6 +25,7 @@ class Cli(Console):
             Selenium fillcss      <which> WHAT...
             Selenium fillid       <which> WHAT...
             Selenium fillxpath    <which> WHAT...
+            Selenium counttags    <which> WHAT...
             Selenium (-h | --help | --version)
 
         Options:
@@ -56,43 +57,46 @@ class Cli(Console):
             self.SendWorkerCommand("stop")
             retval, output = self.ReadWorkerResult()
         elif command["clickcss"]:
-            self.SendWorkerCommand("clickcss '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clickcss " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clickname"]:
-            self.SendWorkerCommand("clickname '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clickname " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clickid"]:
-            self.SendWorkerCommand("clickid '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clickid " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clickxpath"]:
-            self.SendWorkerCommand("clickxpath '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clickxpath " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clearcss"]:
-            self.SendWorkerCommand("clearcss '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clearcss " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clearname"]:
-            self.SendWorkerCommand("clearname '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clearname " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clearid"]:
-            self.SendWorkerCommand("clearid '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clearid " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clearxpath"]:
-            self.SendWorkerCommand("clearxpath '" + command['<which>'] + "'")
+            self.SendWorkerCommand("clearxpath " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["open"]:
-            self.SendWorkerCommand("open '" + command['<which>'] + "'")
+            self.SendWorkerCommand("open " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["fillcss"]:
-            self.SendWorkerCommand("fillcss '" + command['<which>'] + "' '" + ' '.join(command['WHAT']) + "'")
+            self.SendWorkerCommand("fillcss " + command['<which>'] + " " + ' '.join(command['WHAT']) + "")
             retval, output = self.ReadWorkerResult()
         elif command["fillname"]:
-            self.SendWorkerCommand("fillname '" + command['<which>'] + "' '" + ' '.join(command['WHAT']) + "'")
+            self.SendWorkerCommand("fillname " + command['<which>'] + " " + ' '.join(command['WHAT']) + "")
             retval, output = self.ReadWorkerResult()
         elif command["fillid"]:
-            self.SendWorkerCommand("fillid '" + command['<which>'] + "' '" + ' '.join(command['WHAT']) + "'")
+            self.SendWorkerCommand("fillid " + command['<which>'] + " " + ' '.join(command['WHAT']) + "")
             retval, output = self.ReadWorkerResult()
         elif command["fillxpath"]:
-            self.SendWorkerCommand("fillxpath '" + command['<which>'] + "' '" + ' '.join(command['WHAT']) + "'")
+            self.SendWorkerCommand("fillxpath " + command['<which>'] + " " + ' '.join(command['WHAT']) + "")
+            retval, output = self.ReadWorkerResult()
+        elif command["counttags"]:
+            self.SendWorkerCommand("counttags " + command['<which>'] + " " + ' '.join(command['WHAT']) + "")
             retval, output = self.ReadWorkerResult()
         else:
             retval, output = "Fail", "Invalid command"
