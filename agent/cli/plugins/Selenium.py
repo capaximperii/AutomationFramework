@@ -20,6 +20,7 @@ class Cli(Console):
             Selenium clearcss     <which>
             Selenium clearid      <which>
             Selenium clickxpath   <which>
+            Selenium clickmenuitem <which>
             Selenium open         <which>
             Selenium fillname     <which> WHAT...
             Selenium fillcss      <which> WHAT...
@@ -67,6 +68,9 @@ class Cli(Console):
             retval, output = self.ReadWorkerResult()
         elif command["clickxpath"]:
             self.SendWorkerCommand("clickxpath " + command['<which>'] + "")
+            retval, output = self.ReadWorkerResult()
+        elif command["clickmenuitem"]:
+            self.SendWorkerCommand("clickmenuitem " + command['<which>'] + "")
             retval, output = self.ReadWorkerResult()
         elif command["clearcss"]:
             self.SendWorkerCommand("clearcss " + command['<which>'] + "")
