@@ -11,12 +11,17 @@ class SeleniumWorker:
 		self.driver = None
 		self.rfilename = os.path.join("/tmp", 'rselenium')
 		self.wfilename = os.path.join("/tmp", 'wselenium')
+		self.elements = None
+		self.element = None
+
 		self.handler = {
 			"start" :  self.driverLoad,
 			"clickcss" : self.clickElementCSS,
 			"clickname" : self.clickElementName,
 			"clickid" : self.clickElementId,
 			"clickxpath" : self.clickElementXPath,
+			"clickmenutext" : self.clickMenuText,
+			"clickmenuitem" : self.clickMenuItem,
 			"clearcss" 	: self.clearElementCSS,
 			"clearname" : self.clearElementName,
 			"clearid"	: self.clearElementId,
@@ -41,7 +46,7 @@ class SeleniumWorker:
 	def GetCmd(self):
 		reader = open(self.rfilename, 'r')
 		string = reader.readline().strip()
-		string = string.replace("'", "\"")
+		#string = string.replace("'", "\"")
 		#args = shlex.split(string)
 		args = string.split()
 		which = None
@@ -49,10 +54,10 @@ class SeleniumWorker:
 		if len(args) == 0:
 			return True
 		cmdInfo = args[0]
-		if len(args) > 1:
+		if len(args) >= 2:
 			which = args[1]
-		if len(args) > 2:
-			what = "".join(args[2:])
+		if len(args) >= 3:
+			what = " ".join(args[2:])
 		reader.close()
 		try:
 			if cmdInfo in self.handler.keys():
@@ -98,81 +103,96 @@ class SeleniumWorker:
 			pass
 
 	def findElementCSS(self, which):
-		element = self.driver.find_element_by_css_selector(which)
-		return element
+		self.elements = self.driver.find_elements_by_css_selector(which)
+		return self.elements[0]
 
 	def findElementName(self, which):
-		element = self.driver.find_element_by_name(which)
-		return element
+		self.elements = self.driver.find_elements_by_name(which)
+		return self.elements[0]
 
 	def findElementId(self, which):
-		element = self.driver.find_element_by_id(which)
-		return element
+		self.elements = self.driver.find_elements_by_id(which)
+		return self.elements[0]
 
 	def findElementXPath(self, which):
-		element = self.driver.find_element_by_xpath(which)
-		return element
+		self.elements = self.driver.find_elements_by_xpath(which)
+		return self.elements[0]
 
 	def clickElementCSS(self, which, what):
-		self.findElementCSS(which).click()
+		self.element = self.findElementCSS(which)
+		self.element.click()
 		return "Pass"
 
 	def clickElementName(self, which, what):
-		self.findElementName(which).click()
+		self.element = self.findElementName(which)
+		self.element.click()
 		return "Pass"
 
 	def clickElementId(self, which, what):
-		self.findElementId(which).click()
+		self.element = self.findElementId(which)
+		self.element.click()
 		return "Pass"
 
 	def clickElementXPath(self, which, what):
-		self.findElementXPath(which).click()
+		self.element = self.findElementXPath(which)
+		self.element.click()
+		return "Pass"
+
+	def clickMenuText(self, which, what):
+		for link in self.element:
+			if link.text() == which:
+				link.click()
+		return "Pass"
+
+	def clickMenuItem(self, which, what):
+		sys.stdout.write("length is " + str(len(self.elements)));
+		self.elements[int(which)].click()
 		return "Pass"
 
 	def fillElementCSS(self, which, what):
-		element = self.findElementCSS(which)
-		element.send_keys(what)
+		self.element = self.findElementCSS(which)
+		self.element.send_keys(what)
 		return "Pass"
 
 	def fillElementName(self, which, what):
-		element = self.findElementName(which)
-		element.send_keys(what)
+		self.element = self.findElementName(which)
+		self.element.send_keys(what)
 		return "Pass"
 
 	def fillElementId(self, which, what):
-		element = self.findElementId(which)
-		element.send_keys(what)
+		self.element = self.findElementId(which)
+		self.element.send_keys(what)
 		return "Pass"
 
 	def fillElementXPath(self, which, what):
-		element = self.findElementXPath(which)
-		element.send_keys(what)
+		self.element = self.findElementXPath(which)
+		self.element.send_keys(what)
 		return "Pass"
 
 	def countTags(self, which, what):
-		element = self.findElementXPath(which)
-		if len(element) == what:
+		self.element = self.findElementXPath(which)
+		if len(self.element) == what:
 			return "Pass"
 		return "Fail"
 
 	def clearElementCSS(self, which, what):
-		element = self.findElementCSS(which)
-		self.clearIfPossible(element)
+		self.element = self.findElementCSS(which)
+		self.clearIfPossible(self.element)
 		return "Pass"
 
 	def clearElementName(self, which, what):
-		element = self.findElementName(which)
-		self.clearIfPossible(element)
+		self.element = self.findElementName(which)
+		self.clearIfPossible(self.element)
 		return "Pass"
 
 	def clearElementId(self, which, what):
-		element = self.findElementId(which)
-		self.clearIfPossible(element)
+		self.element = self.findElementId(which)
+		self.clearIfPossible(self.element)
 		return "Pass"
 
 	def clearElementXPath(self, which, what):
-		element = self.findElementXPath(which)
-		self.clearIfPossible(element)
+		self.element = self.findElementXPath(which)
+		self.clearIfPossible(self.element)
 		return "Pass"
 
 	def cleanup(self):
