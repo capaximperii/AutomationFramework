@@ -116,7 +116,6 @@ class SeleniumWorker:
 
 	def findElementXPath(self, which):
 		self.elements = self.driver.find_elements_by_xpath(which)
-		print len(self.elements)
 		return self.elements[0]
 
 	def clickElementCSS(self, which, what):
