@@ -429,9 +429,16 @@ class ThinClient:
     Return the rank of the currently running test case.
     """
     def GetCurrentTestRank(self):
+        cur = 0
+        # all test case finished, send 'infinity'
         if len(self.testsuite) == len(self.completed):
-            return -1
-        return self.testsuite[len(self.completed) + 1].rank
+            cur = 10000
+        # none completed, send 'minus infinity'
+        elif len(self.completed) == 0:
+            cur = -10000
+        else :
+            cur = self.testsuite[len(self.completed)].rank
+        return cur
     """
     Output test information for the stats page.
     """
@@ -463,6 +470,7 @@ class ThinClient:
     End the processing for this client and generate report.
     """
     def close(self):
+        print "Closing client"
         testtable = self.recieveTestInfo()
         self.superreport = self.superreport.replace("__TESTSUITE__", testtable)
         self.superreport = self.superreport.replace("__IPADDR__", self.address)

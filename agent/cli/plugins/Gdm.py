@@ -11,6 +11,7 @@ class Cli(Console):
         self.doc = """
         Usage:
             Gdm login <sudopassword> PHRASE...
+            Gdm logout
             Gdm (-h | --help | --version)
 
         Options:
@@ -38,22 +39,30 @@ class Cli(Console):
                 xauthority = xcmdline[i + 1]
             i += 1
         os.environ['XAUTHORITY'] = xauthority
-        for word in command['PHRASE']:
-            word = word.strip()
-            if word == "{Tab}":
-                cmd = 'echo %s|sudo -S xdotool key Tab' %(command['<sudopassword>'])
-            elif word == "{Return}":
-                cmd = 'echo %s|sudo -S xdotool key Return' %(command['<sudopassword>'])
-            elif word == "{Clear}":
-                cmd = 'echo %s|sudo -S xdotool key ctrl+a Delete' %(command['<sudopassword>'])
-            elif word == "{Space}":
-                cmd = 'echo %s|sudo -S xdotool key space' %(command['<sudopassword>'])
-            else:
-                cmd = 'echo %s|sudo -S xdotool type %s' %(command['<sudopassword>'], word)
-            e.Log(cmd)
-            e.Execute(cmd)
-            time.sleep(2)
-            e.Log(e.r.output)
+	if command['login']:
+        	for word in command['PHRASE']:
+            		word = word.strip()
+            		if word == "{Tab}":
+                		cmd = 'echo %s|sudo -S xdotool key Tab' %(command['<sudopassword>'])
+            		elif word == "{Return}":
+                		cmd = 'echo %s|sudo -S xdotool key Return' %(command['<sudopassword>'])
+            		elif word == "{Clear}":
+                		cmd = 'echo %s|sudo -S xdotool key ctrl+a Delete' %(command['<sudopassword>'])
+            		elif word == "{Space}":
+                		cmd = 'echo %s|sudo -S xdotool key space' %(command['<sudopassword>'])
+            		else:
+                		cmd = 'echo %s|sudo -S xdotool type %s' %(command['<sudopassword>'], word)
+            		e.Log(cmd)
+            		e.Execute(cmd)
+            		time.sleep(2)
+            		e.Log(e.r.output)
+	else:
+		cmd = "xdotool key ctrl+alt+Delete"
+		e.Execute(cmd)
+		time.sleep(2)
+		e.Execute("sleep 30 && xdotool key Return &")
+	        e.setExecCodes("Reboot","Going out in 1/2 minute", "Reboot")
+		e.Log(e.r.output)
 
         #print e.r.output
 
