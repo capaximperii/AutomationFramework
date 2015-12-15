@@ -79,6 +79,8 @@ class SeleniumWorker:
 		result = "Pass"
 		if self.driver == None and which.lower() == "firefox":
 			self.driver = webdriver.Firefox()
+		elif self.driver == None and which.lower() == "chrome":
+			self.driver = webdriver.Chrome()
 		else:
 			result = "Fail"
 			sys.stdout.write("driver loading\n")
