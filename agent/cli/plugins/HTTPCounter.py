@@ -25,7 +25,7 @@ class Cli(Console):
                 "sudo -S iptables -A AF -p tcp --dport 80 -m string --string 'GET /' --algo bm -j ACCEPT",
                 "sudo -S iptables -A AF -p tcp --dport 80 -m string --string 'POST /' --algo bm -j ACCEPT",
                 "sudo -S iptables -A AF -p tcp --dport 80 -m string --string 'PUT /' --algo bm -j ACCEPT",
-                "sudo -S iptables -A OUTPUT -j AF" ]
+                "sudo -S iptables -A OUTPUT -o lo -j AF" ]
         e = ExecHelper()
         for c in cmds:
             cmd = "echo %s|%s" % (sudopassword, c)
