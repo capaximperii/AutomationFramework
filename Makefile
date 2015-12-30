@@ -20,6 +20,7 @@ clean:
 	@rm -rf release
 	@rm -rf logs
 	@rm -rf html
+	@rm -rf tmp
 
 package: clean
 	@mkdir -p release
