@@ -182,7 +182,7 @@ class AutomationAgent:
     def ExecServerCommand(self):
         if self.command == "QuitAgent":
             if os.path.exists(self.logFile):
-                self.sendFile(self.logFile, "/fileupload")
+                self.sendFile(self.logFile, "/fileupload/runlog.txt")
             self.tee("Server asked us to quit")
             return None
         elif self.command == "Associated":
@@ -282,7 +282,7 @@ class AutomationAgent:
             data = json.dumps((self.cid, self.url, self.payload))
             data += "\r\n"
             self.waitForIt()
-            self.response = urllib2.urlopen(self.server, data)
+            self.response = urllib2.urlopen(self.server + self.url, data)
             self.clientip = self.response.fp._sock.fp._sock.getsockname()[0]
             self.clientport = self.response.fp._sock.fp._sock.getsockname()[1]
             data = self.response.read().strip()
@@ -369,21 +369,21 @@ if __name__=='__main__':
         else:
             if command["--debug"]:
                 print "uploading debug logs"
-                agent.sendCmdOutput("lspci -v", "/lspciinfo")
-                agent.sendCmdOutput("dmidecode", "/dmidecodeinfo")
-                agent.sendCmdOutput("cat /proc/cpuinfo", "/cpuinfo")
-                agent.sendCmdOutput("dmesg", "/dmesg")
-                agent.sendCmdOutput("cat /etc/modules", "/etcmodules")
-                agent.sendCmdOutput("find -L /sys/class/dmi", "/dmiinfo")
-                agent.sendCmdOutput("lsmod", "/lsmod")
-                agent.sendCmdOutput("sh -c 'cat /etc/modprobe.d/*'", "/modprobe")
-                agent.sendCmdOutput("sh -c 'cat /etc/*-release'", "/osinfo")
-                agent.sendCmdOutput("rpm -qa", "/pkginfo")
-                agent.sendCmdOutput("env", "/envinfo")
-                agent.sendCmdOutput("cat /etc/sysctl.conf", "/sysctl")
-                agent.sendCmdOutput("lshw", "/lshwinfo")
-                agent.sendCmdOutput("udevadm info --export-db", "/sysfs")
-                agent.sendCmdOutput("python agent/cli/bin/tree.py /etc/wyseroot/registry/save /etc/wyseroot/registry/temp /var/wyse/registry", "/registry")
+                agent.sendCmdOutput("lspci -v", "/fileupload/lspciinfo")
+                agent.sendCmdOutput("dmidecode", "/fileupload/dmidecodeinfo")
+                agent.sendCmdOutput("cat /proc/cpuinfo", "/fileupload/cpuinfo")
+                agent.sendCmdOutput("dmesg", "/fileupload/dmesg")
+                agent.sendCmdOutput("cat /etc/modules", "/fileupload/etcmodules")
+                agent.sendCmdOutput("find -L /sys/class/dmi", "/fileupload/dmiinfo")
+                agent.sendCmdOutput("lsmod", "/fileupload/lsmod")
+                agent.sendCmdOutput("sh -c 'cat /etc/modprobe.d/*'", "/fileupload/modprobe")
+                agent.sendCmdOutput("sh -c 'cat /etc/*-release'", "/fileupload/osinfo")
+                agent.sendCmdOutput("rpm -qa", "/fileupload/pkginfo")
+                agent.sendCmdOutput("env", "/fileupload/envinfo")
+                agent.sendCmdOutput("cat /etc/sysctl.conf", "/fileupload/sysctl")
+                agent.sendCmdOutput("lshw", "/fileupload/lshwinfo")
+                agent.sendCmdOutput("udevadm info --export-db", "/fileupload/sysfs")
+                agent.sendCmdOutput("python agent/cli/bin/tree.py /etc/wyseroot/registry/save /etc/wyseroot/registry/temp /var/wyse/registry", "/fileupload/registry")
             print "Now quitting..."
             agent.informQuit()
             sleep(2)
