@@ -277,7 +277,7 @@ class ThinClient:
         self.testsuite   = self.loadConfig()
         self.completed   = []
         self.lastseen = str(datetime.now()).split('.')[0]
-        self.template = os.path.join("service","template","template.html")
+        self.template = os.path.join("service","html","template.html")
         self.html = os.path.join("html",address + ".html")
         self.superreport = ""
     """
