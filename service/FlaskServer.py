@@ -5,7 +5,7 @@ import select
 import thread
 import urllib
 from Colonize import Colonize
-from flask import Flask, url_for, request
+from flask import Flask, url_for, request, send_from_directory
 from ThinClient import javascript
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
@@ -13,6 +13,26 @@ from ThinClient import KNOWN_CLIENTS
 app = Flask("AutomationFramework")
 app.debug = 1
 
+# Simple rule for static html files
+
+@app.route('/js/<path:path>')
+def send_js(path):
+	return send_from_directory('service/js', path)
+
+@app.route('/html/<path:path>')
+def send_html(path):
+	return send_from_directory('service/html', path)
+
+@app.route('/css/<path:path>')
+def send_css(path):
+	return send_from_directory('service/css', path)
+
+@app.route('/assets/<path:path>')
+def send_assets(path):
+	return send_from_directory('service/assets', path)
+
+
+# Built-in commands of AutomationFramework
 @app.route('/result', methods=['POST'])
 def api_result():
 	(cid, data) = getPayload()
@@ -45,7 +65,6 @@ def api_reset():
 		KNOWN_CLIENTS[cid].deleteTests(int(fromrank), int(torank))
 		response = ContactClient(cid, "OK")
 	return response
-
 
 @app.route('/noreset', methods=['POST'])
 def api_noreset():

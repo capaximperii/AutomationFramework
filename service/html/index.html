@@ -1,0 +1,15 @@
+<html ng-app="AF">
+<head>
+  <script src="/js/ajaxmin.js"></script>
+  <script src="/js/statsController.js"></script>
+</head>
+<body ng-controller="statsCtrl">
+  <ul>
+    <li ng-repeat="client in clients">
+      <span>{{client.ip}}</span>
+      <p>{{client.log}}</p>
+    </li>
+  </ul>
+
+</body>
+</html>
