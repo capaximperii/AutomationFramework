@@ -1,4 +1,4 @@
-var app = angular.module('AF', ['ngResource', 'ui.router']);
+var app = angular.module('AF', ['ngResource', 'angularModalService', 'ui.router']);
 
 app.controller('MainCtrl', function ($scope, $state) {
 	$state.go('dashboard');

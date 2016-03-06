@@ -1,0 +1,35 @@
+<div class="modal fade">
+<div class="modal-dialog" style="width: 80%; display: block"> 
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close(null, 200)">
+          &times;
+        </button>
+        <h4 class="modal-title">Configure {{client.ip}}</h4>
+      </div>
+      <div class="modal-body">
+        <table class = "table">
+           <thead>
+              <tr>
+                 <th>Ip</th>
+                 <th>History</th>
+                 <th>Running </th>
+                 <th>Progress</th>
+                 <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
+              </tr>
+           </thead>
+           
+           <tbody>
+              <tr>
+                 <td>{{client.ip}}</td>
+                 <td>{{client.history + " previous runs"}}</td>
+                 <td>{{0}}</td>
+                 <td>{{0}}</td>
+                 <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+    </div> 
+  </div> 
+</div>

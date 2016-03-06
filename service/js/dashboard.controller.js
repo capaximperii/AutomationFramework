@@ -1,6 +1,6 @@
 var app = angular.module('AF');
 
-app.controller('dashboardCtrl', function ($scope, ClientsResource) {
+app.controller('dashboardCtrl', function ($scope, ClientsResource, ModalService) {
 	$scope.clients = [];
 	$scope.selectedClient = null;
 
@@ -29,9 +29,26 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource) {
 		return progress;
 	}
 
+	var showPopup = function(client) {
+              ModalService.showModal({
+                templateUrl: '/html/configure.html',
+                inputs: {
+				    client: client,
+				},
+                controller: function($scope, close, client, TestsResource)  
+                  {
+                    $scope.close = close;
+                    $scope.client = client;
+                  }
+                }).then(function(modal) {
+                  modal.element.modal();
+              });
+            };      
+
 	$scope.configure = function(client) {
-		ClientsResource.get(client.ip, function(client){
+		ClientsResource.get({ip: client.ip}, function(client){
 			$scope.selectedClient = client;
+			showPopup(client);
 		});
 	}
 

@@ -118,9 +118,9 @@ def api_depcheck():
 	return response
 
 # API methods
-@app.route('/api/clients', defaults={'clientId': None}, methods=['GET'])
-@app.route('/api/clients/<clientId>', methods=['GET'])
-def api_getClient(clientId):
+@app.route('/api/clients', methods=['GET'])
+def api_getClient():
+	clientId = request.args.get('ip', None)
 	response = []
 	if(clientId == None):
 		for k in KNOWN_CLIENTS.keys():
@@ -144,11 +144,12 @@ def api_getClient(clientId):
 				description = {'ip': client.address, 'history': client.history ,'current': 0 ,'progress': 0}
 				response.append(description)
 	else:
+		response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0 }
 		for k in KNOWN_CLIENTS.keys():
-			response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0 }
 			client = KNOWN_CLIENTS[k]
-			if(client.address == clientId):
+			if client.address.startswith(clientId.strip()):
 				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+				break
 	return json.dumps(response)
 
 @app.route('/api/clients', methods=['POST'])
