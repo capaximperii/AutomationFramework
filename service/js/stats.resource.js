@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('AF')
-    .factory('StatsResource', function ($resource, DateUtils) {
-        return $resource('/api/clients/:id', {}, {
+    .factory('StatsResource', function ($resource) {
+        return $resource('/api/stats/:id', {}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

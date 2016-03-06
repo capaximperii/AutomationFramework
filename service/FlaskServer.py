@@ -209,6 +209,20 @@ def api_getServerLogs():
 		response = f.readlines()
 	return json.dumps(response)
 
+@app.route('/api/stats', methods=['GET'])
+def api_getStats():
+	data = request.json
+	ip = data['ip']
+	response = {}
+	for c in KNOWN_CLIENTS.keys():
+		response['progress'] = c.progress()
+		response['testoutput'] = []
+		for test in self.testsuite:
+			output =  {test.name, test.desc, "\n".join(test.commands), test.starttime, test.endtime, test.console, test.result }
+			testoutput.append(output)
+	return json.dumps(response)
+
+
 # Helper methods
 def getPayload():
 	client = request.remote_addr

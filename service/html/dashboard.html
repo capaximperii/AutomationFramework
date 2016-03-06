@@ -7,6 +7,7 @@
          <th>History</th>
          <th>Running </th>
          <th>Progress</th>
+         <th>Stats</th>
          <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
          <th><span class="glyphicon glyphicon-hand-down"></span></th>
       </tr>
@@ -18,8 +19,14 @@
          <td>{{client.history + " previous runs"}}</td>
          <td>{{displayProgressRank(client)}}</td>
          <td>{{client.progress + ' %'}}</td>
+         <td ng-click="showStats(client)"><span class="glyphicon glyphicon-fullscreen"></span></td>
          <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
-         <td ng-show="client.current > -9999 && client.current < 9999 " ng-click="launch(client)"><span class="glyphicon glyphicon-play-circle"></span></td>
+         <td ng-show="client.progress == 0 && client.ip.indexOf('*') < 0" ng-click="launch(client)">
+            <span class="glyphicon glyphicon-play-circle"></span>
+         </td>
+         <td ng-show="client.progress != 0 || client.ip.indexOf('*') >= 0">
+            <span class="glyphicon glyphicon-ban-circle"></span>
+         </td>
       </tr>
 	</tbody>
 </table>

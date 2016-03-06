@@ -1,6 +1,6 @@
 var app = angular.module('AF');
 
-app.controller('dashboardCtrl', function ($scope, ClientsResource, ModalService) {
+app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource, ModalService) {
 	$scope.clients = [];
 	$scope.selectedClient = null;
 
@@ -29,25 +29,41 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, ModalService)
 		return progress;
 	}
 
-	var showPopup = function(client) {
-              ModalService.showModal({
-                templateUrl: '/html/configure.html',
-                inputs: {
-				    client: client,
-				},
-                controller: 'configureCtrl',
-                }).then(function(modal) {
-                  modal.element.modal();
-              });
-            };      
+	var showConfigurePopup = function(client) {
+		ModalService.showModal({
+			templateUrl: '/html/configure.html',
+			inputs: {
+			    client: client,
+			},
+			controller: 'configureCtrl',
+			}).then(function(modal) {
+			  modal.element.modal();
+		});
+     }
+	
+	var showStatsPopup = function(client) {
+		ModalService.showModal({
+			templateUrl: '/html/stats.html',
+			inputs: {
+			    client: client,
+			},
+			controller: 'statsCtrl',
+			}).then(function(modal) {
+			  modal.element.modal();
+		});
+     }
 
 	$scope.configure = function(client) {
 		ClientsResource.get({ip: client.ip}, function(client){
 			$scope.selectedClient = client;
-			showPopup(client);
+			showConfigurePopup(client);
 		});
 	}
 	
+	$scope.showStats = function(client) {
+		showStatsPopup(client);
+	}
+
 	$scope.launch = function(client) {
 		client = response = {'ip': client.ip, 'history':0, 'current':0 ,'progress':0 };
 		ClientsResource.update(client , function(message) {

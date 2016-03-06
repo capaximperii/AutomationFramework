@@ -1,10 +1,10 @@
-var phonecatApp = angular.module('AF', []);
+var app = angular.module('AF');
 
-phonecatApp.controller('statsCtrl', function ($scope) {
-  $scope.clients = [
-    {'ip': 'Nexus S',
-     'log': 'Fast just got faster with Nexus S.'},
-    {'ip': 'Motorola XOOM™ with Wi-Fi',
-     'log': 'The Next, Next Generation tablet.'}
-  ];
+app.controller('statsCtrl', function ($scope, client, StatsResource) {
+	$scope.client = client;
+	$scope.loadStatsForClient = function(client) {
+		StatsResource.get({ip: client.ip}, function(response){
+			console.log(response);
+		});
+	}
 });
