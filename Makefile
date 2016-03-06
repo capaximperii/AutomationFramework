@@ -1,6 +1,6 @@
 
 server:
-	@python service/AutomationServer.py
+	@python service/FlaskServer.py
 
 client:
 	@python agent/AutomationAgent.py test --debug

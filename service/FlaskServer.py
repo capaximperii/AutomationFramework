@@ -6,7 +6,6 @@ import thread
 import urllib
 from Colonize import Colonize
 from flask import Flask, url_for, request, send_from_directory, redirect
-from ThinClient import javascript
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
 
@@ -88,6 +87,8 @@ def api_fileupload(filename):
 		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__osinfo__", "=")
 	elif filename == 'pkginfo':
 		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__pkginfo__", "-")
+	elif filename == 'runlog.txt':
+		KNOWN_CLIENTS[cid].recieveLog(data)
 	else:
 		section = "__" + filename + "__"
 		KNOWN_CLIENTS[cid].recieveInfoToRaw(data, section)
@@ -124,14 +125,30 @@ def api_getClient(clientId):
 	if(clientId == None):
 		for k in KNOWN_CLIENTS.keys():
 			client = KNOWN_CLIENTS[k]
-			description = {'ip': client.address, 'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
 			response.append(description)
+		configPath = "config"
+		files = [f for f in os.listdir(configPath) if os.path.isfile(os.path.join(configPath, f))]
+		for f in files:
+			if 'default.ini' in f:
+				continue
+			found = False
+			for r in response:
+				if r['ip']  in f:
+					found = True
+			if found == False:
+				ip = f.replace('.ini', '')
+				cid = ThinClient.ComputeClientID(ip)
+				client = ThinClient(ip)
+				KNOWN_CLIENTS[cid] = client
+				description = {'ip': client.address, 'history': client.history ,'current': 0 ,'progress': 0}
+				response.append(description)
 	else:
 		for k in KNOWN_CLIENTS.keys():
-			response = {'ip': 'None', 'current': 0 ,'progress': 0 }
+			response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0 }
 			client = KNOWN_CLIENTS[k]
 			if(client.address == clientId):
-				response = {'ip': client.address, 'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
 	return json.dumps(response)
 
 # Helper methods
