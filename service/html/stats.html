@@ -1,15 +1,41 @@
 <div class="modal fade">
-	<div class="modal-dialog" style="width: 80%; display: block"> 
+	<div class="modal-dialog" style="width: 100%; display: block"> 
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close(null, 200)">&times;</button>
-				<h4 class="modal-title">Automation Server Statistics for {{client.ip}} </h4>
+				<h4 class="modal-title"> <span ng-click="loadStatsForClient(client)"><small class="glyphicon glyphicon-refresh"></small></span>
+
+				Automation Server Statistics for {{client.ip}} 
+				</h4>
 			</div>
 			<div class="modal-body">
 				
-				<div>
+				<div >                                           
+				  <div class="table-responsive">          
+				  <table class="table">
+				    <thead>
+				      <tr>
+				        <th>Name</th>
+				        <th>Description</th>
+				        <th>Commands</th>
+				        <th>Start</th>
+				        <th>End</th>
+				        <th>Result</th>
+				      </tr>
+				    </thead>
+				    <tbody>
+				      <tr ng-repeat="test in stats.testoutput" ng-click="showConsolePopup(test)">
+				        <td>{{test.name}}</td>
+				        <td>{{test.desc}}</td>
+				        <td style="white-space:pre">{{test.commands}}</td>
+				        <td>{{test.starttime}}</td>
+				        <td>{{test.endtime}}</td>
+				        <td>{{test.result}}</td>
+				      </tr>
+				    </tbody>
+				  </table>
+				  </div>
 				</div>
-
 
 			</div>
 		</div> 

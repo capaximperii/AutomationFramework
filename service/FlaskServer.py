@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import os
 import sys
 import json
@@ -211,15 +212,15 @@ def api_getServerLogs():
 
 @app.route('/api/stats', methods=['GET'])
 def api_getStats():
-	data = request.json
-	ip = data['ip']
+	ip = request.args.get('ip', None)
+	cid = ThinClient.ComputeClientID(ip)
 	response = {}
-	for c in KNOWN_CLIENTS.keys():
-		response['progress'] = c.progress()
-		response['testoutput'] = []
-		for test in self.testsuite:
-			output =  {test.name, test.desc, "\n".join(test.commands), test.starttime, test.endtime, test.console, test.result }
-			testoutput.append(output)
+	client = KNOWN_CLIENTS[cid]
+	response['progress'] = client.progress()
+	response['testoutput'] = []
+	for test in client.testsuite:
+		output =  {'name': test.name, 'desc': test.desc, 'commands': "\n".join(test.commands), 'starttime': test.starttime,'endtime': test.endtime, 'console': test.console, 'result': test.result }
+		response['testoutput'].append(output)
 	return json.dumps(response)
 
 
