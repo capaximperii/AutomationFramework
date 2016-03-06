@@ -35,11 +35,7 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, ModalService)
                 inputs: {
 				    client: client,
 				},
-                controller: function($scope, close, client, TestsResource)  
-                  {
-                    $scope.close = close;
-                    $scope.client = client;
-                  }
+                controller: 'configureCtrl',
                 }).then(function(modal) {
                   modal.element.modal();
               });

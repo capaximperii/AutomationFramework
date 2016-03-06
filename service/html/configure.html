@@ -8,27 +8,24 @@
         <h4 class="modal-title">Configure {{client.ip}}</h4>
       </div>
       <div class="modal-body">
-        <table class = "table">
-           <thead>
-              <tr>
-                 <th>Ip</th>
-                 <th>History</th>
-                 <th>Running </th>
-                 <th>Progress</th>
-                 <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
-              </tr>
-           </thead>
-           
-           <tbody>
-              <tr>
-                 <td>{{client.ip}}</td>
-                 <td>{{client.history + " previous runs"}}</td>
-                 <td>{{0}}</td>
-                 <td>{{0}}</td>
-                 <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
-              </tr>
-          </tbody>
-        </table>
+
+
+
+        <div class="container-fluid">
+          <h1>Available tests </h1>
+          <div class="row">
+            <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:yellow;">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </div>
+            <div class="col-sm-9 col-md-6 col-lg-8" style="background-color:pink;">
+              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+            </div>
+          </div>
+        </div>
+
+
+
       </div>
     </div> 
   </div> 
