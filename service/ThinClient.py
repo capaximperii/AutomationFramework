@@ -7,6 +7,7 @@ from datetime import datetime
 from TestCase import TestCase
 from SuperReport import *
 import shutil
+import ConfigParser
 
 KNOWN_CLIENTS = {}
 
@@ -165,7 +166,8 @@ class ThinClient:
                 break
         print "Loading %s for client %s" %(self.configPath, self.address)
         if not self.configPath.startswith('config/' + self.address):
-            shutil.copyfile(self.configPath, "config/" + self.address + ".ini")
+            self.configPath = "config/" + self.address + ".ini"
+            shutil.copyfile(self.configPath, self.configPath)
         return TestCase.LoadFromDisk(self.configPath)
     """
     Compute UUID for the client.
@@ -256,6 +258,20 @@ class ThinClient:
         lastseen = datetime.strptime(self.lastseen, '%Y-%m-%d %H:%M:%S')
         seconds = (now - lastseen).total_seconds()
         return seconds
+
+    """
+    """
+    def updateConfigFile(self, configs):
+        rank = 1
+        cfgfile = open(self.configPath, 'w')
+        Config = ConfigParser.ConfigParser()
+        for config in configs:
+            Config.add_section(config['name'])
+            Config.set(config['name'], 'rank',rank)
+            Config.set(config['name'], 'desc', config['desc'])
+            Config.set(config['name'], 'commands', config['commands'])
+            Config.write(cfgfile)
+        cfgfile.close();
     """
     Destructor of object.
     """

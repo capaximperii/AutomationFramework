@@ -2,7 +2,7 @@
 
 angular.module('AF')
     .factory('TestsResource', function ($resource) {
-        return $resource('/api/clients/:id', {}, {
+        return $resource('/api/tests/:id', {}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',

@@ -1,6 +1,6 @@
 import ast
+import json
 import ConfigParser
-
 class TestCase:
     """
     The notional represntation of a test case constructor.
@@ -38,9 +38,14 @@ class TestCase:
             o = fmt % (self.name, self.desc, c, self.starttime, self.endtime, self.console.replace("\n","<br>"), orange, self.result)
         o += "<tr><td colspan=7><pre>%s</pre></td></tr>" % (self.details)
         return o
+    
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
+
     """
     Load test case configuration from disk. Called by thinclient method.
-    """
+    """    
     @staticmethod
     def LoadFromDisk(filename):
         testsuite = list()

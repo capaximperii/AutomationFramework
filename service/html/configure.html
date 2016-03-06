@@ -1,32 +1,57 @@
 <div class="modal fade">
-<div class="modal-dialog" style="width: 80%; display: block"> 
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close(null, 200)">
-          &times;
-        </button>
-        <h4 class="modal-title">Configure {{client.ip}}</h4>
-      </div>
-      <div class="modal-body">
+	<div class="modal-dialog" style="width: 80%; display: block"> 
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close(null, 200)">
+					&times;</button>
+					<h4 class="modal-title">Configure {{client.ip}}</h4>
+				</div>
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-3 col-md-6 col-lg-4">
+								<h4>Select & Configure available test</h4>
+								<div class="dropdown">
+									<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">										{{currentTest.name || 'Select a test' }}<span class="caret"></span></button>
+									<ul class="dropdown-menu">
+										<li class="list-group-item"
+										ng-repeat="t in allTests"
+										ng-click="selectTest(t)">
+										{{t.name}}</li>
+									</ul>
+								</div>
+								<div>
+									<form class="form-horizontal">
+										<div class="control-group" ng-repeat="var in variables">
+											<label class="control-label">{{var.name}}</label>
+											<div class="controls">
+												<input type="text" ng-model="var.value" ng-value="var.value">
+											</div>
+										</div>
+										<div class="control-group">
+										<button class="btn btn-default" ng-show="currentTest" type="button" ng-click="addTest()"> Add this test </button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<div class="col-sm-9 col-md-6 col-lg-8">
+								<h4> Click to delete a test </h4>
+								<div class="list-group">
+									<button type="button" class="list-group-item"
+									ng-repeat="t in selectedTests"
+									ng-click="removeTest(t)">{{t.name}}</button>
+								</div>
+							</div>
+						</div>
+						<div>
+							{{message}}
+							<button class="btn btn-primary pull-right btn-sm RbtnMargin"
+							type="button"
+							ng-click="save()">Save configuration </button>
+						</div>
+					</div>
+				</div>
+			</div> 
+		</div> 
+	</div>
 
-
-
-        <div class="container-fluid">
-          <h1>Available tests </h1>
-          <div class="row">
-            <div class="col-sm-3 col-md-6 col-lg-4" style="background-color:yellow;">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </div>
-            <div class="col-sm-9 col-md-6 col-lg-8" style="background-color:pink;">
-              Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-            </div>
-          </div>
-        </div>
-
-
-
-      </div>
-    </div> 
-  </div> 
-</div>

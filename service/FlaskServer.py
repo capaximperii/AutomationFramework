@@ -8,6 +8,7 @@ from Colonize import Colonize
 from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
+from TestCase import TestCase
 
 app = Flask("AutomationFramework")
 app.debug = 1
@@ -164,6 +165,29 @@ def api_addClient():
 	else:
 		response = {}
 	return json.dumps(response)
+
+@app.route('/api/tests', methods=['GET'])
+def api_getTests():
+	clientId = request.args.get('ip', None)
+	response = []
+	if (clientId == None):
+		bank = TestCase.LoadFromDisk("service/assets/testbank.ini")
+	else:
+		bank = TestCase.LoadFromDisk('config/' + clientId + '.ini')
+	for t in bank:
+		response.append(t.toJSON())
+	return json.dumps(response)
+
+@app.route('/api/tests', methods=['PUT'])
+def api_updateTests():
+	data = request.json
+	response = {'message': 'Updated the config'}
+	cid = ThinClient.ComputeClientID(data['ip'])
+	client = KNOWN_CLIENTS[cid]
+	configs = json.loads(data['config'])
+	client.updateConfigFile(configs)
+	return json.dumps(response)
+
 
 # Helper methods
 def getPayload():
