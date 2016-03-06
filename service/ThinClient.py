@@ -269,7 +269,7 @@ class ThinClient:
             cfgfile.write('desc = ' + config['desc'] + "\n")
             cfgfile.write("[\n")
             for c in config['commands']:
-                cfgfile.write(c.encode('latin-1'))
+                cfgfile.write('"' + c.encode('latin-1') + '",\n')
             cfgfile.write("]\n")
             rank += 1
         cfgfile.close();
