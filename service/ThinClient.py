@@ -269,10 +269,12 @@ class ThinClient:
             cfgfile.write('desc = ' + config['desc'] + "\n")
             cfgfile.write("commands = [\n")
             for c in config['commands']:
-                cfgfile.write('"' + c.encode('latin-1') + '",\n')
-            cfgfile.write("]\n")
+                cfgfile.write('\t"' + c.encode('latin-1') + '",\n')
+            cfgfile.write("\t]\n")
+            cfgfile.write("\n\n")
             rank += 1
         cfgfile.close();
+        
     """
     Destructor of object.
     """
