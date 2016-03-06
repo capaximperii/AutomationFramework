@@ -35,10 +35,13 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource) {
 		});
 	}
 
-	$scope.addClient = function() {
+	$scope.addClient = function(newclient) {
 		client = response = {'ip': newclient.ip, 'history':0, 'current':0 ,'progress':0 };
 		ClientsResource.save(client , function(c) {
-			$scope.clients.push(c);
+			if(c.ip != null)
+				$scope.clients.push(c);
+			else
+				newclient.ip = "Already exists?"
 		});
 	}
 

@@ -151,6 +151,19 @@ def api_getClient(clientId):
 				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
 	return json.dumps(response)
 
+@app.route('/api/clients', methods=['POST'])
+def api_addClient():
+	client = request.json
+	cid = ThinClient.ComputeClientID(client['ip'])
+	c = None
+	if cid not in KNOWN_CLIENTS.keys():
+		KNOWN_CLIENTS[cid] = ThinClient(client['ip'])
+		c = KNOWN_CLIENTS[cid]
+		response = {'ip': c.address, 'history': c.history ,'current': c.GetCurrentTestRank() ,'progress': c.progress()}
+	else:
+		response = {}
+	return json.dumps(response)
+
 # Helper methods
 def getPayload():
 	client = request.remote_addr
