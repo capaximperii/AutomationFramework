@@ -186,7 +186,6 @@ def api_updateTests():
 	if cid not in KNOWN_CLIENTS.keys():
 		KNOWN_CLIENTS[cid] = ThinClient(data['ip'])
 	client = KNOWN_CLIENTS[cid]
-	print data['config']
 	configs = json.loads(data['config'])
 	client.updateConfigFile(configs)
 	return json.dumps(response)

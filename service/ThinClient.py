@@ -267,7 +267,7 @@ class ThinClient:
             cfgfile.write("[" + config['name'] + "]\n")
             cfgfile.write('rank = '+ str(rank) + "\n")
             cfgfile.write('desc = ' + config['desc'] + "\n")
-            cfgfile.write("[\n")
+            cfgfile.write("commands = [\n")
             for c in config['commands']:
                 cfgfile.write('"' + c.encode('latin-1') + '",\n')
             cfgfile.write("]\n")
