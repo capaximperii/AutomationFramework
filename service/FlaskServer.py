@@ -201,7 +201,7 @@ def getPayload():
 		#KNOWN_CLIENTS[cid].reset()
 	elif cid in KNOWN_CLIENTS.keys():
 		print "Resuming client from where it last left", client
-	arg =json.loads(data)[2]
+	arg = json.loads(data)[2]
 	return (cid, arg)
 
 def ContactClient(cid, response):

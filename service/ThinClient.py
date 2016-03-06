@@ -266,10 +266,13 @@ class ThinClient:
         cfgfile = open(self.configPath, 'w')
         Config = ConfigParser.ConfigParser()
         for config in configs:
+            commands = config['commands']
+            for c in commands:
+                c = c.encode('utf-8')
             Config.add_section(config['name'])
             Config.set(config['name'], 'rank',rank)
             Config.set(config['name'], 'desc', config['desc'])
-            Config.set(config['name'], 'commands', config['commands'])
+            Config.set(config['name'], 'commands', commands)
             Config.write(cfgfile)
         cfgfile.close();
     """
