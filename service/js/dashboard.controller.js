@@ -47,7 +47,14 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, ModalService)
 			showPopup(client);
 		});
 	}
-
+	
+	$scope.launch = function(client) {
+		client = response = {'ip': client.ip, 'history':0, 'current':0 ,'progress':0 };
+		ClientsResource.update(client , function(message) {
+			$scope.message = message;
+		});	
+	}
+	
 	$scope.addClient = function(newclient) {
 		client = response = {'ip': newclient.ip, 'history':0, 'current':0 ,'progress':0 };
 		ClientsResource.save(client , function(c) {

@@ -8,6 +8,7 @@
          <th>Running </th>
          <th>Progress</th>
          <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
+         <th><span class="glyphicon glyphicon-hand-down"></span></th>
       </tr>
    </thead>
    
@@ -18,6 +19,7 @@
          <td>{{displayProgressRank(client)}}</td>
          <td>{{client.progress + ' %'}}</td>
          <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
+         <td ng-show="client.current > -9999 && client.current < 9999 " ng-click="launch(client)"><span class="glyphicon glyphicon-play-circle"></span></td>
       </tr>
 	</tbody>
 </table>

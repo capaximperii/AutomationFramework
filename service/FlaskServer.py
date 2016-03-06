@@ -190,6 +190,24 @@ def api_updateTests():
 	client.updateConfigFile(configs)
 	return json.dumps(response)
 
+@app.route('/api/clients', methods=['PUT'])
+def api_launch():
+	data = request.json
+	ip = data['ip']
+	response = {'message': 'Launched ' + ip}
+	#TODO: this should be server config 
+	sshaction = ip + " " + "admin" + " " + "admin" + " " + "/tmp" + " " + "ftp://10.10.10.10/client.tgz" + " reset\n"
+	with open("/tmp/colonize", "w") as f:
+		f.write(sshaction)
+		f.close()
+	return json.dumps(response)
+
+@app.route('/api/server', methods=['GET'])
+def api_getServerLogs():
+	response = ""
+	with open("tmp/serverlog.txt") as f:
+		response = f.readlines()
+	return json.dumps(response)
 
 # Helper methods
 def getPayload():

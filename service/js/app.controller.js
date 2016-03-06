@@ -11,7 +11,6 @@ app.config(function ($stateProvider) {
 	        views: {
 	            'menubar@': {
 	                templateUrl: '/html/leftmenu.html'
-	                //controller: 'NavbarController'
 	            }
 	        }
 	    })
@@ -24,5 +23,16 @@ app.config(function ($stateProvider) {
 					controller: 'dashboardCtrl'
 				}
 			}
+		})
+		.state('serverevent', {
+			parent: 'menubar-page',
+			url: '/serverevent',
+			views: {
+				'content@': {
+					templateUrl: '/html/serverevent.html',
+					controller: 'serverEventsCtrl'
+				}
+			}
 		});
+
 	});
