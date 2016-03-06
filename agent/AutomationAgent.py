@@ -56,9 +56,9 @@ class AutomationAgent:
     """
     def requestReset(self, agentWillReset=True):
         self.tee("Resetting client state")
-        self.url = "/reset"
+        self.url = "/reset/yes"
         if agentWillReset == False:
-            self.url = "/noreset"
+            self.url = "/reset/no"
         self.payload = """["", "",""]"""
         self.contactServer()
         self.clientInfo = ClientConstants.getClientConstants()

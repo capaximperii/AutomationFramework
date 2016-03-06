@@ -5,7 +5,7 @@ import select
 import thread
 import urllib
 from Colonize import Colonize
-from flask import Flask, url_for, request, send_from_directory
+from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import javascript
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
@@ -13,7 +13,13 @@ from ThinClient import KNOWN_CLIENTS
 app = Flask("AutomationFramework")
 app.debug = 1
 
+#TODO: noreset
+
 # Simple rule for static html files
+
+@app.route('/')
+def root():
+    return redirect("/html/index.html", code=302)
 
 @app.route('/js/<path:path>')
 def send_js(path):
@@ -47,36 +53,41 @@ def api_gettest():
 	response = ContactClient(cid, testcase)
 	return response
 
-@app.route('/reset', methods=['POST'])
+@app.route('/reset/<isReset>', methods=['POST'])
 def api_reset():
 	(cid, data) = getPayload()
-	c = ""
-	retVal, rankarg, console = json.loads(data)
-	if rankarg:
-		c, fromrank, torank, times = rankarg
-	if not rankarg:
-		KNOWN_CLIENTS[cid].reset()
-		response = ContactClient(cid, "OK")
-		del KNOWN_CLIENTS[cid]
-	elif c in ["Repeat"]:
-		KNOWN_CLIENTS[cid].repeatTests(int(fromrank), int(torank), int(times))
-		response = ContactClient(cid, "OK")
-	elif c in ["Skip"]:
-		KNOWN_CLIENTS[cid].deleteTests(int(fromrank), int(torank))
-		response = ContactClient(cid, "OK")
-	return response
-
-@app.route('/noreset', methods=['POST'])
-def api_noreset():
-	(cid, data) = getPayload()
-	response = ContactClient(cid, "Associated")
+	if(isReset == 'yes'):
+		c = ""
+		retVal, rankarg, console = json.loads(data)
+		if rankarg:
+			c, fromrank, torank, times = rankarg
+		if not rankarg:
+			KNOWN_CLIENTS[cid].reset()
+			response = ContactClient(cid, "OK")
+			del KNOWN_CLIENTS[cid]
+		elif c in ["Repeat"]:
+			KNOWN_CLIENTS[cid].repeatTests(int(fromrank), int(torank), int(times))
+			response = ContactClient(cid, "OK")
+		elif c in ["Skip"]:
+			KNOWN_CLIENTS[cid].deleteTests(int(fromrank), int(torank))
+			response = ContactClient(cid, "OK")
+	else:
+		response = ContactClient(cid, "Associated")
 	return response
 
 @app.route('/fileupload/<filename>', methods=['POST'])
 def api_fileupload(filename):
 	(cid, data) = getPayload()
-	print filename + " uploaded"
-	response = ContactClient(cid, "OK")
+	if filename == 'cpuinfo':
+		KNOWN_CLIENTS[cid].recieveCpuInfo(arg)
+	elif filename == 'osinfo':
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__osinfo__", "=")
+	elif filename == 'pkginfo':
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__pkginfo__", "-")
+	else:
+		section = "__" + filename + "__"
+		KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, section)
+	response = ContactClient(cid, "UPLOADED")
 	return response
 
 @app.route('/quitting', methods=['POST'])
@@ -119,5 +130,14 @@ def ContactClient(cid, response):
 	data = json.dumps((cid,response))
 	return data
 
+def AgentInstaller():
+    if sys.platform.startswith("win32"):
+        print "This platform does not support remote installer"
+        return
+    c = Colonize()
+    while True:
+        c.prepare()
+
 if __name__ == '__main__':
+	thread.start_new_thread( AgentInstaller, ())
 	app.run(host='0.0.0.0', port=8080)
