@@ -1,15 +1,31 @@
-<html ng-app="AF">
+<!DOCTYPE html>
+<html lang="en" ng-app="AF">
 <head>
-  <script src="/js/ajaxmin.js"></script>
-  <script src="/js/statsController.js"></script>
-</head>
-<body ng-controller="statsCtrl">
-  <ul>
-    <li ng-repeat="client in clients">
-      <span>{{client.ip}}</span>
-      <p>{{client.log}}</p>
-    </li>
-  </ul>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+        <!-- Bootstrap Core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Custom CSS -->
+    <link href="/css/simple-sidebar.css" rel="stylesheet">
+</head>
+  <script src="/js/jquery.js"></script>
+  <script src="/js/ajaxmin.js"></script>
+  <script src="/js/ajaxroutermin.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/ajaxresourcemin.js"></script>
+  <script src="/js/app.controller.js"></script>
+  <script src="/js/dashboard.controller.js"></script>
+  <script src="/js/clients.resource.js"></script>
+  <script src="/js/stats.resource.js"></script>
+
+<body ng-controller="MainCtrl">
+    <div id="wrapper">
+	    <div ui-view="menubar" ng-cloak=""></div>
+	    <div ui-view="content" ng-cloak=""></div>
+	</div>
 </body>
 </html>

@@ -19,11 +19,15 @@ app.debug = 1
 
 @app.route('/')
 def root():
-    return redirect("/html/index.html", code=302)
+	return redirect("/html/index.html", code=302)
 
 @app.route('/js/<path:path>')
 def send_js(path):
 	return send_from_directory('service/js', path)
+
+@app.route('/fonts/<path:path>')
+def send_fonts(path):
+	return send_from_directory('service/assets', path)
 
 @app.route('/html/<path:path>')
 def send_html(path):
@@ -54,7 +58,7 @@ def api_gettest():
 	return response
 
 @app.route('/reset/<isReset>', methods=['POST'])
-def api_reset():
+def api_reset(isReset):
 	(cid, data) = getPayload()
 	if(isReset == 'yes'):
 		c = ""
@@ -79,14 +83,14 @@ def api_reset():
 def api_fileupload(filename):
 	(cid, data) = getPayload()
 	if filename == 'cpuinfo':
-		KNOWN_CLIENTS[cid].recieveCpuInfo(arg)
+		KNOWN_CLIENTS[cid].recieveCpuInfo(data)
 	elif filename == 'osinfo':
-		KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__osinfo__", "=")
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__osinfo__", "=")
 	elif filename == 'pkginfo':
-		KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__pkginfo__", "-")
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__pkginfo__", "-")
 	else:
 		section = "__" + filename + "__"
-		KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, section)
+		KNOWN_CLIENTS[cid].recieveInfoToRaw(data, section)
 	response = ContactClient(cid, "UPLOADED")
 	return response
 
@@ -112,6 +116,25 @@ def api_depcheck():
 		response = ContactClient(cid, "WAITON")
 	return response
 
+# API methods
+@app.route('/api/clients', defaults={'clientId': None}, methods=['GET'])
+@app.route('/api/clients/<clientId>', methods=['GET'])
+def api_getClient(clientId):
+	response = []
+	if(clientId == None):
+		for k in KNOWN_CLIENTS.keys():
+			client = KNOWN_CLIENTS[k]
+			description = {'ip': client.address, 'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+			response.append(description)
+	else:
+		for k in KNOWN_CLIENTS.keys():
+			response = {'ip': 'None', 'current': 0 ,'progress': 0 }
+			client = KNOWN_CLIENTS[k]
+			if(client.address == clientId):
+				response = {'ip': client.address, 'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+	return json.dumps(response)
+
+# Helper methods
 def getPayload():
 	client = request.remote_addr
 	cid = ThinClient.ComputeClientID(client)
@@ -130,13 +153,14 @@ def ContactClient(cid, response):
 	data = json.dumps((cid,response))
 	return data
 
+# Colonize thread
 def AgentInstaller():
-    if sys.platform.startswith("win32"):
-        print "This platform does not support remote installer"
-        return
-    c = Colonize()
-    while True:
-        c.prepare()
+	if sys.platform.startswith("win32"):
+		print "This platform does not support remote installer"
+		return
+	c = Colonize()
+	while True:
+		c.prepare()
 
 if __name__ == '__main__':
 	thread.start_new_thread( AgentInstaller, ())

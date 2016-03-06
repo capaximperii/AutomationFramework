@@ -1,0 +1,34 @@
+<div>
+<H3> Dashboard </H3>
+<table class = "table">
+   <thead>
+      <tr>
+         <th>Ip</th>
+         <th>Runs</th>
+         <th>Running </th>
+         <th>Progress</th>
+         <th>Configure</th>
+      </tr>
+   </thead>
+   
+   <tbody>
+      <tr ng-repeat="client in clients">
+         <td>{{client.ip}}</td>
+         <td>{{client.history}}</td>
+         <td>{{displayProgressRank(client)}}</td>
+         <td>{{client.progress + ' %'}}</td>
+         <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
+      </tr>
+	</tbody>
+</table>
+
+<form>
+  <fieldset class="form-group">
+    <label for="newclient">Enter IP of new client</label>
+    <input type="email" maxlength=16 class="form-control" id="newclient" placeholder="Enter IP of new client">
+    <small class="text-muted">The system does not check for validity, and uses ssh to install test agent</small>
+  </fieldset>
+ <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign"></span></button>
+ </form>
+
+</div>

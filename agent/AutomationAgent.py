@@ -97,9 +97,9 @@ class AutomationAgent:
             self.url = "/depcheck"
         elif testresult in ["Repeat"]:
             self.clientInfo.constants["${LOOP}"] += 1
-            self.url = "/reset"
+            self.url = "/reset/yes"
         elif testresult in ["Skip"]:
-            self.url = "/reset"
+            self.url = "/reset/yes"
         self.payload = encoded
         self.contactServer()
 
