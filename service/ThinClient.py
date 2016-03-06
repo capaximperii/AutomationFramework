@@ -7,7 +7,6 @@ from datetime import datetime
 from TestCase import TestCase
 from SuperReport import *
 import shutil
-import ConfigParser
 
 KNOWN_CLIENTS = {}
 
@@ -264,16 +263,12 @@ class ThinClient:
     def updateConfigFile(self, configs):
         rank = 1
         cfgfile = open(self.configPath, 'w')
-        Config = ConfigParser.ConfigParser()
         for config in configs:
-            commands = config['commands']
-            for c in commands:
-                c = c.encode('utf-8')
-            Config.add_section(config['name'])
-            Config.set(config['name'], 'rank',rank)
-            Config.set(config['name'], 'desc', config['desc'])
-            Config.set(config['name'], 'commands', commands)
-            Config.write(cfgfile)
+            cfgfile.write("[" + config['name'] + "]\n")
+            cfgfile.write('rank = '+ str(rank))
+            cfgfile.write('desc = ' + config['desc'])
+            cfgfile.write ('commands = ' + config['commands'])
+            rank += 1
         cfgfile.close();
     """
     Destructor of object.
