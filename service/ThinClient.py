@@ -166,7 +166,7 @@ class ThinClient:
 				self.configPath = os.path.join("config", "clients", fname)
 				break
 		print "Loading %s for client %s" %(self.configPath, self.address)
-		if not self.configPath.startswith('config/clients/' + self.address):
+		if not self.configPath.startswith('config/clients/' + self.address + '.ini'):
 			shutil.copyfile(self.configPath, 'config/clients/' + self.address + '.ini')
 			self.configPath = "config/clients/" + self.address + ".ini"
 		return TestCase.LoadFromDisk(self.configPath)
