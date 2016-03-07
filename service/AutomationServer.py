@@ -128,7 +128,7 @@ def api_getClient():
 			client = KNOWN_CLIENTS[k]
 			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
 			response.append(description)
-		configPath = "config"
+		configPath = "config/clients/"
 		files = [f for f in os.listdir(configPath) if os.path.isfile(os.path.join(configPath, f))]
 		for f in files:
 			if 'default.ini' in f:
@@ -171,9 +171,9 @@ def api_getTests():
 	clientId = request.args.get('ip', None)
 	response = []
 	if (clientId == None):
-		bank = TestCase.LoadFromDisk("service/assets/testbank.ini")
+		bank = TestCase.LoadFromDisk("config/tests/testbank.ini")
 	else:
-		bank = TestCase.LoadFromDisk('config/' + clientId + '.ini')
+		bank = TestCase.LoadFromDisk('config/clients/' + clientId + '.ini')
 	for t in bank:
 		response.append(t.toJSON())
 	return json.dumps(response)

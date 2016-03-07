@@ -18,7 +18,7 @@ class ThinClient:
 	Constructor  for notional representation of each client
 	"""
 	def __init__(self, address):
-		self.configPath = os.path.join("config", "default.ini")
+		self.configPath = os.path.join("config", 'clients',"default.ini")
 		self.address = address
 		self.testsuite   = self.loadConfig()
 		self.completed   = []
@@ -162,13 +162,13 @@ class ThinClient:
 		for r in range(0,4):
 			stars = ".*" * r
 			fname = self.address.rsplit(".", r)[0] + stars + ".ini"
-			if os.path.exists(os.path.join("config", fname)):
-				self.configPath = os.path.join("config", fname)
+			if os.path.exists(os.path.join("config", "clients", fname)):
+				self.configPath = os.path.join("config", "clients", fname)
 				break
 		print "Loading %s for client %s" %(self.configPath, self.address)
-		if not self.configPath.startswith('config/' + self.address):
-			self.configPath = "config/" + self.address + ".ini"
-			shutil.copyfile(self.configPath, self.configPath)
+		if not self.configPath.startswith('config/clients/' + self.address):
+			shutil.copyfile(self.configPath, 'config/clients/' + self.address + '.ini')
+			self.configPath = "config/clients/" + self.address + ".ini"
 		return TestCase.LoadFromDisk(self.configPath)
 	"""
 	Compute UUID for the client.
