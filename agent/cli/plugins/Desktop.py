@@ -4,6 +4,7 @@ from cli.core.ExecHelper import ExecHelper
 from thirdparty.screenshot.mss import MSSLinux
 import sys
 import os
+import shutil
 
 
 class Cli(Console):
@@ -42,7 +43,7 @@ class Cli(Console):
         elif command["screenshot"]:
             scrot = MSSLinux()
             for filename in scrot.save(output="scrot.png", screen=-1):
-                os.rename("scrot.png", command['<filename>'])
+                shutil.move("scrot.png", command['<filename>'])
                 e.Log('File: "{}" created.'.format(filename))
         elif command["windowimg"]:
             e.Log("Executing commands for windowimg")

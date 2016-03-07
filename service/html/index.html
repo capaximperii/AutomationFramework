@@ -1,0 +1,41 @@
+<html lang="en" ng-app="AF">
+<head>
+    <title>Automation Framework</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="GUI tool for automation framework">
+    <meta name="author" content="God">
+    <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+    <!-- Bootstrap Core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/simple-sidebar.css" rel="stylesheet">
+</head>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/ajaxmin.js"></script>
+<script src="/js/ajaxmodal.js"></script>
+<script src="/js/ajaxroutermin.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/ajaxresourcemin.js"></script>
+<script src="/js/app.controller.js"></script>
+<script src="/js/stats.controller.js"></script>
+<script src="/js/manage.controller.js"></script>
+<script src="/js/dashboard.controller.js"></script>
+<script src="/js/configure.controller.js"></script>
+<script src="/js/settings.controller.js"></script>
+<script src="/js/serverevents.controller.js"></script>
+<script src="/js/clients.resource.js"></script>
+<script src="/js/tests.resource.js"></script>
+<script src="/js/stats.resource.js"></script>
+<script src="/js/manage.resource.js"></script>
+<script src="/js/server.resource.js"></script>
+<script src="/js/settings.resource.js"></script>
+<body ng-controller="MainCtrl">
+    <div id="wrapper">
+        <div ui-view="menubar" ng-cloak=""></div>
+        <div ui-view="content" ng-cloak=""></div>
+    </div>
+</body>
+
+</html>

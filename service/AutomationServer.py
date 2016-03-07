@@ -1,330 +1,305 @@
+# -*- coding: UTF-8 -*-
 import os
 import sys
 import json
 import select
 import thread
 import urllib
-import SocketServer
 from Colonize import Colonize
-from ThinClient import javascript
+from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
+from TestCase import TestCase
+import ConfigParser
 
-PORT_NUMBER = 8080
+app = Flask("AutomationFramework")
+app.debug = 1
 
-CLIENT_COMMANDS = ["/result" , "/gettest", "/reset", "/noreset","/fileupload", "/quitting", "/registry",
-    "/cpuinfo", "/lspciinfo", "/dmiinfo", "/dmidecodeinfo","/dmesg", "/lshwinfo", "/sysfs",
-    "/etcmodules", "/lsmod", "/modprobe", "/osinfo", "/pkginfo", "/envinfo", "/sysctl", "/depcheck"]
+# Simple rule for static html files
+
+@app.route('/')
+def root():
+	return redirect("/html/index.html", code=302)
+
+@app.route('/js/<path:path>')
+def send_js(path):
+	return send_from_directory('service/js', path)
+
+@app.route('/fonts/<path:path>')
+def send_fonts(path):
+	return send_from_directory('service/assets', path)
+
+@app.route('/html/<path:path>')
+def send_html(path):
+	return send_from_directory('service/html', path)
+
+@app.route('/css/<path:path>')
+def send_css(path):
+	return send_from_directory('service/css', path)
+
+@app.route('/assets/<path:path>')
+def send_assets(path):
+	return send_from_directory('service/assets', path)
+
+
+# Built-in commands of AutomationFramework
+@app.route('/result', methods=['POST'])
+def api_result():
+	(cid, data) = getPayload()
+	KNOWN_CLIENTS[cid].recieveResult(data)
+	response = ContactClient(cid, "OK")
+	return response
+
+@app.route('/gettest', methods=['POST'])
+def api_gettest():
+	(cid, data) = getPayload()
+	testcase = KNOWN_CLIENTS[cid].sendTestCase()
+	response = ContactClient(cid, testcase)
+	return response
+
+@app.route('/reset/<isReset>', methods=['POST'])
+def api_reset(isReset):
+	(cid, data) = getPayload()
+	if(isReset == 'yes'):
+		c = ""
+		retVal, rankarg, console = json.loads(data)
+		if rankarg:
+			c, fromrank, torank, times = rankarg
+		if not rankarg:
+			KNOWN_CLIENTS[cid].reset()
+			response = ContactClient(cid, "OK")
+			del KNOWN_CLIENTS[cid]
+		elif c in ["Repeat"]:
+			KNOWN_CLIENTS[cid].repeatTests(int(fromrank), int(torank), int(times))
+			response = ContactClient(cid, "OK")
+		elif c in ["Skip"]:
+			KNOWN_CLIENTS[cid].deleteTests(int(fromrank), int(torank))
+			response = ContactClient(cid, "OK")
+	else:
+		response = ContactClient(cid, "Associated")
+	return response
+
+@app.route('/fileupload/<filename>', methods=['POST'])
+def api_fileupload(filename):
+	(cid, data) = getPayload()
+	if filename == 'cpuinfo':
+		KNOWN_CLIENTS[cid].recieveCpuInfo(data)
+	elif filename == 'osinfo':
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__osinfo__", "=")
+	elif filename == 'pkginfo':
+		KNOWN_CLIENTS[cid].recieveInfoToFmt(data, "__pkginfo__", "-")
+	elif filename == 'runlog.txt':
+		KNOWN_CLIENTS[cid].recieveLog(data)
+	else:
+		section = "__" + filename + "__"
+		KNOWN_CLIENTS[cid].recieveInfoToRaw(data, section)
+	response = ContactClient(cid, "UPLOADED")
+	return response
+
+@app.route('/quitting', methods=['POST'])
+def api_quitting():
+	(cid, data) = getPayload()
+	KNOWN_CLIENTS[cid].close()
+	response = ContactClient(cid, "OK")
+	return response
+
+@app.route('/depcheck', methods=['POST'])
+def api_depcheck():
+	(cid, data) = getPayload()
+	retVal, deparg, console = json.loads(data)
+	depip,deprank = deparg
+	depcid = ThinClient.ComputeClientID(depip)
+	response = ""
+	if depcid in KNOWN_CLIENTS.keys() and KNOWN_CLIENTS[depcid].GetCurrentTestRank() > int(deprank):
+		KNOWN_CLIENTS[cid].recieveResult(arg, True)
+		response = ContactClient(cid, "OK")
+	else:
+		print "client %s will wait for client %s" % (client, depip)
+		response = ContactClient(cid, "WAITON")
+	return response
+
+# API methods
+@app.route('/api/clients', methods=['GET'])
+def api_getClient():
+	clientId = request.args.get('ip', None)
+	response = []
+	if(clientId == None):
+		for k in KNOWN_CLIENTS.keys():
+			client = KNOWN_CLIENTS[k]
+			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+			response.append(description)
+		configPath = "config/clients/"
+		files = [f for f in os.listdir(configPath) if os.path.isfile(os.path.join(configPath, f))]
+		for f in files:
+			if 'default.ini' in f:
+				continue
+			found = False
+			for r in response:
+				if r['ip']  in f:
+					found = True
+			if found == False:
+				ip = f.replace('.ini', '')
+				cid = ThinClient.ComputeClientID(ip)
+				client = ThinClient(ip)
+				KNOWN_CLIENTS[cid] = client
+				description = {'ip': client.address, 'history': client.history ,'current': 0 ,'progress': 0}
+				response.append(description)
+	else:
+		response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0 }
+		for k in KNOWN_CLIENTS.keys():
+			client = KNOWN_CLIENTS[k]
+			if client.address.startswith(clientId.strip()):
+				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+				break
+	return json.dumps(response)
+
+@app.route('/api/clients', methods=['POST'])
+def api_addClient():
+	client = request.json
+	cid = ThinClient.ComputeClientID(client['ip'])
+	c = None
+	if cid not in KNOWN_CLIENTS.keys():
+		KNOWN_CLIENTS[cid] = ThinClient(client['ip'])
+		c = KNOWN_CLIENTS[cid]
+		response = {'ip': c.address, 'history': c.history ,'current': c.GetCurrentTestRank() ,'progress': c.progress()}
+	else:
+		response = {}
+	return json.dumps(response)
+
+@app.route('/api/tests', methods=['GET'])
+def api_getTests():
+	clientId = request.args.get('ip', None)
+	response = []
+	if (clientId == None):
+		bank = TestCase.LoadFromDisk("config/tests/testbank.ini")
+	else:
+		bank = TestCase.LoadFromDisk('config/clients/' + clientId + '.ini')
+	for t in bank:
+		response.append(t.toJSON())
+	return json.dumps(response)
+
+@app.route('/api/tests', methods=['PUT'])
+def api_updateTests():
+	data = request.json
+	response = {'message': 'Updated the config'}
+	cid = ThinClient.ComputeClientID(data['ip'])
+	if cid not in KNOWN_CLIENTS.keys():
+		KNOWN_CLIENTS[cid] = ThinClient(data['ip'])
+	client = KNOWN_CLIENTS[cid]
+	configs = json.loads(data['config'])
+	client.updateConfigFile(configs)
+	return json.dumps(response)
+
+@app.route('/api/clients', methods=['PUT'])
+def api_launch():
+	data = request.json
+	ip = data['ip']
+	response = {'message': 'Launched ' + ip}
+	serverConfig = LoadConfig()
+	sshaction = ip + " " + serverConfig['username'] + " " + serverConfig['password'] + " " + serverConfig["installPath"] + " " + serverConfig["downloadUrl"] + " reset\n"
+	with open("/tmp/colonize", "w") as f:
+		f.write(sshaction)
+		f.close()
+	return json.dumps(response)
+
+@app.route('/api/server', methods=['GET'])
+def api_getServerLogs():
+	response = ""
+	with open("tmp/serverlog.txt") as f:
+		response = f.readlines()
+	return json.dumps(response)
+
+@app.route('/api/stats', methods=['GET'])
+def api_getStats():
+	ip = request.args.get('ip', None)
+	cid = ThinClient.ComputeClientID(ip)
+	response = {}
+	client = KNOWN_CLIENTS[cid]
+	response['progress'] = client.progress()
+	response['testoutput'] = []
+	for test in client.testsuite:
+		output =  {'name': test.name, 'desc': test.desc, 'commands': "\n".join(test.commands), 'starttime': test.starttime,'endtime': test.endtime, 'console': test.console, 'result': test.result }
+		response['testoutput'].append(output)
+	return json.dumps(response)
+
+@app.route('/api/manage', methods=['GET', 'POST'])
+def api_manageConfiguration():
+	response = ""
+	if request.method == 'GET':
+		print os.system('tar zcf service/assets/backup.tgz config')
+		response = {'url': "/assets/backup.tgz", 'message': 'Download file'}
+	else:
+		data = request.files['file'].read()
+		with open('service/assets/backup.tgz', 'wb') as f:
+			f.write(data)
+			f.close()
+		os.system("tar zxf service/assets/backup.tgz")
+		response = {'url': "/assets/backup.tgz", 'message': 'Uploaded file'}
+	return json.dumps(response)
+
+@app.route('/api/settings', methods=['GET', 'PUT'])
+def api_manageSettings():
+	response = None
+	if request.method == 'GET':
+		response = LoadConfig()
+	else:
+		config = request.json
+		response = config
+		cfgfile = open("config/server/server.ini", 'w')
+		cfgfile.write("[Server]\n")
+		cfgfile.write('downloadUrl = '+ config['downloadUrl'] + "\n")
+		cfgfile.write('username = ' + config['username'] + "\n")
+		cfgfile.write('password = ' + config['password'] + "\n")
+		cfgfile.write('installPath = ' + config['installPath'] + "\n")
+		cfgfile.write("\n\n")
+		cfgfile.close();
+	return json.dumps(response) 
+
+
+# Helper methods
+def getPayload():
+	client = request.remote_addr
+	cid = ThinClient.ComputeClientID(client)
+	data = request.get_data()
+	response = "";
+	if cid not in KNOWN_CLIENTS.keys():
+		print "Client %s assigned CID %s"%(client, cid)
+		KNOWN_CLIENTS[cid] = ThinClient(client)
+		#KNOWN_CLIENTS[cid].reset()
+	elif cid in KNOWN_CLIENTS.keys():
+		print "Resuming client from where it last left", client
+	arg = json.loads(data)[2]
+	return (cid, arg)
+
+def ContactClient(cid, response):
+	data = json.dumps((cid,response))
+	return data
+
 
 """
-Automation server is the server main class that is the web server providing HTTP service to clients.
-"""
-class AutomationServer(SocketServer.BaseRequestHandler):
-    def handle(self):
-        client = self.getClientAddress()
-        data = ""
-        while True:
-            incoming = select.select([self.request],[], [], 5)
-            if not incoming[0]:
-                break
-            quantum = self.request.recv(1400)
-            if not quantum.endswith('\r\n'):
-                data += quantum
-            elif quantum.endswith('\r\n'):
-                data += quantum
-                break
-            elif len(quantum) == 0:
-                break
-        data = data.strip()
-        data = self.getPayload(data)
-        if len(data.strip()) > 0:
-            cid, path, arg = json.loads(data)
-        else:
-            #This is a browser stat request
-            cid, path , arg = [ None, "/stats", ""]
-        self.sendHeader()
-        if not cid:
-            cid = ThinClient.ComputeClientID(client)
-        if cid not in KNOWN_CLIENTS.keys() and path in CLIENT_COMMANDS:
-            print "Client %s assigned CID %s"%(client, cid)
-            KNOWN_CLIENTS[cid] = ThinClient(client)
-            KNOWN_CLIENTS[cid].reset()
-            self.ContactClient(cid, "Associated")
-        elif cid in KNOWN_CLIENTS.keys() and path == "/noreset":
-            print "Resuming client from where it last left", client
-            self.ContactClient(cid, "Associated")
-        elif path == "/stats":
-            res = "<!DOCTYPE html>\n<html>"
-            res += javascript
-            res += "<title> Automation server statistics </title>"
-            for c in KNOWN_CLIENTS.keys():
-                res += KNOWN_CLIENTS[c].prettyOutput()
-            res += "<footer><B><a href=/ssh>Remote installer</a>&nbsp;&nbsp;&nbsp<a href=/config>Upload config</a></B></footer>"
-            res += "</html>"
-            self.request.sendall(res)
-            #self.ContactClient(cid, res)
-        elif path == "/gettest":
-            testcase = KNOWN_CLIENTS[cid].sendTestCase()
-            self.ContactClient(cid, testcase)
-        elif path == "/result":
-            KNOWN_CLIENTS[cid].recieveResult(arg)
-            self.ContactClient(cid, "OK")
-        elif path == "/depcheck":
-            retVal, deparg, console = json.loads(arg)
-            depip,deprank = deparg
-            depcid = ThinClient.ComputeClientID(depip)
-            if depcid in KNOWN_CLIENTS.keys() and KNOWN_CLIENTS[depcid].GetCurrentTestRank() > int(deprank):
-                KNOWN_CLIENTS[cid].recieveResult(arg, True)
-                self.ContactClient(cid, "OK")
-            else:
-                print "client %s will wait for client %s" % (client, depip)
-                self.ContactClient(cid, "WAITON")
-        elif path == "/fileupload":
-            KNOWN_CLIENTS[cid].recieveLog(arg)
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/config":
-            page = """
-                <!DOCTYPE html>
-                <html>
-                <body>
-                <form action="/confupload" method="post" enctype="multipart/form-data">
-                    Select config file to upload:
-                        <input type="file" name="fileToUpload" id="fileToUpload">
-                        <input type="submit" name="submit" value="upload configuration">
-                </form>
+Load test case configuration from disk. Called by thinclient method.
+"""    
+def LoadConfig():
+	serverConfig = {};
+	filename = "config/server/server.ini"
+	config = ConfigParser.ConfigParser()
+	config.read(filename)
+	for c in config.sections():
+		serverConfig['downloadUrl'] = config.get(c , "downloadUrl")
+		serverConfig['username'] = config.get(c , "username")
+		serverConfig['password'] = config.get(c , "password")
+		serverConfig['installPath'] = config.get(c , "installPath")        
+	return serverConfig
 
-                </body>
-                </html>
-                """
-            self.request.sendall(page)
-        elif path == "/ssh":
-            page = """
-            <!DOCTYPE html>
-            <html>
-            <title>Automation Framework: SSH based remote installer</title>
-            <body>
-            <form action="/sshaction" method="post" encoding="form-data">
-            <table>
-                    <tr><td>Client ip </td><td><input type="text" name="ipaddress" required></td></tr>
-                    <tr><td>SSH User </td><td><input type="text" name="username" required></td></tr>
-                    <tr><td>SSH Password</td><td><input type="password" name="password" required></td></tr>
-                    <tr><td>Install path </td><td><input type="text" name="path" required></td></tr>
-                    <tr><td>Download URL </td><td><input type="url" name="url" required></td></tr>
-                    <tr><td></td><td><input type="submit" value="Install"></td></tr>
-            </table>
-            </form>
-            </body>
-            </html>
-            """
-            self.request.sendall(page)
-        elif path =="/sshaction":
-            params = arg.strip().split('&')
-            ipaddress = username = password = path = url = ""
-            for p in params:
-                if p.split('=')[0] == "ipaddress":
-                    ipaddress = urllib.unquote(p.split('=')[1])
-                elif p.split('=')[0] == "username":
-                    username = urllib.unquote(p.split('=')[1])
-                elif p.split('=')[0] == "password":
-                    password = urllib.unquote(p.split('=')[1])
-                elif p.split('=')[0] == "path":
-                    path = urllib.unquote(p.split('=')[1])
-                elif p.split('=')[0] == "url":
-                    url = urllib.unquote(p.split('=')[1])
-            sshaction = ipaddress + " " + username + " " + password + " " + path + " " + url + " reset\n"
-            with open("/tmp/colonize", "w") as f:
-                f.write(sshaction)
-                f.close()
-            page = self.redirectToStats()
-            self.request.sendall(page)
-        elif path =="/confupload":
-            filename, filecontent = arg
-            f = open(os.path.join("config", filename), "w")
-            f.write(filecontent)
-            f.close()
-            page = self.redirectToStats()
-            self.request.sendall(page)
-        elif path == "/cpuinfo":
-            KNOWN_CLIENTS[cid].recieveCpuInfo(arg)
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/lspciinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__LSPCI__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/dmiinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__DMI__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/dmidecodeinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__DMIDECODE__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/dmesg":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__DMESG__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/etcmodules":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__ETCMODULES__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/lsmod":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__LSMOD__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/modprobe":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__MODPROBE__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/osinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__OSINFO__", "=")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/sysctl":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__SYSCTL__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/sysfs":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__SYSFS__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/envinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__ENVINFO__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/lshwinfo":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__LSHW__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/registry":
-            KNOWN_CLIENTS[cid].recieveInfoToRaw(arg, "__REGISTRY__")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/pkginfo":
-            KNOWN_CLIENTS[cid].recieveInfoToFmt(arg, "__PACKAGESINFO__", "-")
-            self.ContactClient(cid, "UPLOADED")
-        elif path == "/quitting":
-            KNOWN_CLIENTS[cid].close()
-            self.ContactClient(cid, "OK")
-        elif path == "/reset":
-            c = ""
-            retVal, rankarg, console = json.loads(arg)
-            if rankarg:
-                c, fromrank, torank, times = rankarg
-            if not rankarg:
-                KNOWN_CLIENTS[cid].reset()
-                self.ContactClient(cid, "OK")
-                del KNOWN_CLIENTS[cid]
-            elif c in ["Repeat"]:
-                KNOWN_CLIENTS[cid].repeatTests(int(fromrank), int(torank), int(times))
-                self.ContactClient(cid, "OK")
-            elif c in ["Skip"]:
-                KNOWN_CLIENTS[cid].deleteTests(int(fromrank), int(torank))
-                self.ContactClient(cid, "OK")
-        else:
-            self.ContactClient(cid, "invalid")
-        self.sendFooter()
-
-    """
-    Return the data payload sent by client skipping the HTTP header.
-    """
-    def getPayload(self,data):
-        confupload = False
-        sshaction = False
-        #Skip http header, by ignoring everything above an empty line
-        if "GET /config" in data:
-            return json.dumps((None, "/config", ""))
-        elif "POST /confupload" in data:
-            confupload = True
-        elif "GET /ssh" in data:
-            return json.dumps((None, "/ssh", ""))
-        elif "POST /sshaction" in data:
-            sshaction = True
-        arg = data.split("\n")
-        index = 0
-        for a in arg:
-            if len(a.strip()) == 0:
-                break
-            index += 1
-        arg = arg[index:]
-        if confupload is True:
-            filecontent = ""
-            filename = "default.ini"
-            index = 0
-            for line in arg:
-                if len(line.strip()) > 0:
-                    boundary = line.strip()
-                    index += 1
-                    break
-            for line in arg[index+1:]:
-                line = line.strip()
-                if boundary not in line:    # and len(line) > 0:
-                    if line.startswith("Content-") and "filename=" in line:
-                        filename = line.split("filename=",1)[1].replace('"','')
-                    elif line.startswith("Content"):
-                        pass
-                    else:
-                        filecontent += line + os.linesep
-                elif boundary in line:
-                    break
-            arg = json.dumps((None, "/confupload",(filename,filecontent)))
-        elif sshaction is True:
-            post = "\n".join(arg)
-            arg = json.dumps((None, "/sshaction", post))
-        else:
-            arg = "\n".join(arg)
-        return arg
-    """
-    """
-    def redirectToStats(self):
-        page = """
-        <html>
-        <head>
-            <meta http-equiv="refresh" content="2; url=/stats" />
-            <title>Configuration saved</title>
-        </head>
-          <body>
-            Configuration sent, Redirecting page...
-          </body>
-        </html>
-        """
-        return page
-
-    """
-    Send the HTTP header
-    """
-    def sendHeader(self):
-        self.request.sendall("HTTP/1.1 200 OK\r\n Content-type: text/html \r\n\r\n")
-    """
-    Send the HTTP footer
-    """
-    def sendFooter(self):
-        self.request.sendall("\r\n")
-    """
-    Send the statistic page.
-    """
-    def sendStats(self):
-        self.send_response(200)
-        self.send_header('Content-type','text/html')
-        self.end_headers()
-        self.request.sendall(self.path)
-    """
-    Get the address where this request originated.
-    """
-    def getClientAddress(self):
-        return self.client_address[0]
-    """
-    Send data back to the client encoded as json.
-    """
-    def ContactClient(self, cid, response):
-        data = json.dumps((cid,response))
-        self.request.sendall(data)
-"""
-Install agent on the clients via ssh.
-"""
+# Colonize thread
 def AgentInstaller():
-    if sys.platform.startswith("win32"):
-        print "This platform does not support remote installer"
-        return
-    c = Colonize()
-    while True:
-        c.prepare()
+	if sys.platform.startswith("win32"):
+		print "This platform does not support remote installer"
+		return
+	c = Colonize()
+	while True:
+		c.prepare()
 
-
-if __name__=='__main__':
-    try:
-        SocketServer.ThreadingTCPServer.allow_reuse_address = True
-        server = SocketServer.ThreadingTCPServer(('', PORT_NUMBER), AutomationServer)
-        thread.start_new_thread( AgentInstaller, ())
-        print "Starting automation server..."
-        server.serve_forever()
-
-    except KeyboardInterrupt:
-        print '^C received, shutting down the web server'
-        server.socket.close()
+if __name__ == '__main__':
+	thread.start_new_thread( AgentInstaller, ())
+	app.run(host='0.0.0.0', port=8080)

@@ -1,6 +1,8 @@
+SHELL:=/bin/bash
 
 server:
-	@python service/AutomationServer.py
+	-@mkdir tmp
+	@python service/AutomationServer.py > >(tee tmp/serverlog.txt ) 2> >(tee tmp/serverlog.txt >&2)
 
 client:
 	@python agent/AutomationAgent.py test --debug
