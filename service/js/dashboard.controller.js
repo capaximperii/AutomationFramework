@@ -5,8 +5,10 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource
 	$scope.selectedClient = null;
 
 	$scope.loadAllClients = function() {
+		$scope.message = "Loading ...";
 		ClientsResource.query(function(clients){
 			$scope.clients = clients;
+			$scope.message = "Loaded";
 		});
 	}
 
@@ -56,6 +58,7 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource
 	$scope.configure = function(client) {
 		ClientsResource.get({ip: client.ip}, function(client){
 			$scope.selectedClient = client;
+			$scope.message = "Configuring client " + client.ip;
 			showConfigurePopup(client);
 		});
 	}
@@ -74,10 +77,14 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource
 	$scope.addClient = function(newclient) {
 		client = response = {'ip': newclient.ip, 'history':0, 'current':0 ,'progress':0 };
 		ClientsResource.save(client , function(c) {
-			if(c.ip != null)
+			if(c.ip != null) {
 				$scope.clients.push(c);
-			else
-				newclient.ip = "Already exists?"
+				$scope.message = "Client added, click on settings to configure test cases.";
+			}
+			else {
+				newclient.ip = "";
+				$scope.message = "The client you added, already exists.";
+			}
 		});
 	}
 
