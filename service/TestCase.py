@@ -15,29 +15,6 @@ class TestCase:
         self.result = "Pending"
         self.console = None
         self.details = "Details are not yet available ..."
-    """
-    Html representation of a test case for the stats page.
-    """
-    def prettyOutput(self):
-        c = "<br>".join(self.commands)
-        #c = "\n".join(self.commands)
-        red = "#E84C3D"
-        pink = "#F899C3"
-        green ="#267E79"
-        orange = "#FAB148"
-        if not self.console:
-            self.console = ""
-        fmt = "<tr><td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td> %s </td> <td bgcolor='%s'> %s</td></tr> "
-        if self.result == "Pass":
-            o = fmt % (self.name, self.desc, c, self.starttime, self.endtime, self.console.replace("\n","<br>"), green, self.result)
-        elif self.result == "Fail":
-            o = fmt % (self.name, self.desc, c, self.starttime, self.endtime, self.console.replace("\n","<br>"), red, self.result)
-        elif self.result == "Running":
-            o = fmt % (self.name, self.desc, c, self.starttime, self.endtime, self.console.replace("\n","<br>"), pink, self.result)
-        else:
-            o = fmt % (self.name, self.desc, c, self.starttime, self.endtime, self.console.replace("\n","<br>"), orange, self.result)
-        o += "<tr><td colspan=7><pre>%s</pre></td></tr>" % (self.details)
-        return o
     
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 

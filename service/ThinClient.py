@@ -190,20 +190,7 @@ class ThinClient:
         else :
             cur = self.testsuite[len(self.completed)].rank
         return cur
-    """
-    Output test information for the stats page.
-    """
-    def prettyOutput(self):
-        p = self.progress()
-        #o = javascript
-        o = "\n<table border=1 id='report_" + self.address + "' width='100%'>"
-        o += "\n<thead><th>Test name</th><th>Description</th><th>Commands list</th><th>Start time</th><th>End at</th><th>Misc information</th><th>Status</th></thead>\n<tbody>"
-        for test in self.testsuite:
-            o += "\n" + test.prettyOutput()
-        o += "\n</tbody>\n"
-        o += "<tfoot><tr><th colspan='6'>Completed %s</th><th>%s%%</th></tr></tfoot>" %(self.address, p)
-        o += "</table>\n"
-        return o
+
     """
     Format test cases into a html output report.
     """

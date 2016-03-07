@@ -2,7 +2,7 @@ SHELL:=/bin/bash
 
 server:
 	-@mkdir tmp
-	@python service/FlaskServer.py > >(tee tmp/serverlog.txt ) 2> >(tee tmp/serverlog.txt >&2)
+	@python service/AutomationServer.py > >(tee tmp/serverlog.txt ) 2> >(tee tmp/serverlog.txt >&2)
 
 client:
 	@python agent/AutomationAgent.py test --debug
