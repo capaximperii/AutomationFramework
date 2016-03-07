@@ -1,48 +1,45 @@
 <div>
-<H3 style="text-align: center"> Dashboard </H3>
-<div class="alert alert-success">
-  <strong ng-show="message">{{message}}</strong> 
-</div>
-<table class = "table">
-   <thead>
-      <tr>
-         <th>Ip</th>
-         <th>History</th>
-         <th>Running </th>
-         <th>Progress</th>
-         <th>Stats</th>
-         <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
-         <th><span class="glyphicon glyphicon-hand-down"></span></th>
-      </tr>
-   </thead>
-   
-   <tbody>
-      <tr ng-repeat="client in clients">
-         <td>{{client.ip}}</td>
-         <td>{{client.history + " previous runs"}}</td>
-         <td>{{displayProgressRank(client)}}</td>
-         <td>{{client.progress + ' %'}}</td>
-         <td ng-click="showStats(client)"><span class="glyphicon glyphicon-fullscreen"></span></td>
-         <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
-         <td ng-show="client.progress == 0 && client.ip.indexOf('*') < 0" ng-click="launch(client)">
-            <span class="glyphicon glyphicon-play-circle"></span>
-         </td>
-         <td ng-show="client.progress != 0 || client.ip.indexOf('*') >= 0">
-            <span class="glyphicon glyphicon-ban-circle"></span>
-         </td>
-      </tr>
-	</tbody>
-</table>
-
-<form>
-<div class="input-group">
-   <input type="text" class="form-control" placeholder="Add a new client" ng-model="newclient.ip">
-   <span class="input-group-btn">
+    <H3 style="text-align: center"> Dashboard </H3>
+    <div class="alert alert-success">
+        <strong ng-show="message">{{message}}</strong>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ip</th>
+                <th>History</th>
+                <th>Running </th>
+                <th>Progress</th>
+                <th>Stats</th>
+                <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
+                <th><span class="glyphicon glyphicon-hand-down"></span></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="client in clients">
+                <td>{{client.ip}}</td>
+                <td>{{client.history + " previous runs"}}</td>
+                <td>{{displayProgressRank(client)}}</td>
+                <td>{{client.progress + ' %'}}</td>
+                <td ng-click="showStats(client)"><span class="glyphicon glyphicon-fullscreen"></span></td>
+                <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
+                <td ng-show="client.progress == 0 && client.ip.indexOf('*') < 0" ng-click="launch(client)">
+                    <span class="glyphicon glyphicon-play-circle"></span>
+                </td>
+                <td ng-show="client.progress != 0 || client.ip.indexOf('*') >= 0">
+                    <span class="glyphicon glyphicon-ban-circle"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <form>
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Add a new client" ng-model="newclient.ip">
+            <span class="input-group-btn">
    <button class="btn btn-default" type="button" ng-click="addClient(newclient)">
       <span class="glyphicon glyphicon-plus-sign"></span>
-   </button>
-   </span>
-</div>
- </form>
-
+            </button>
+            </span>
+        </div>
+    </form>
 </div>

@@ -1,18 +1,19 @@
 <div>
-<H3 style="text-align: center"> Server Events </H3>
-<table class = "table">
-   <thead>
-      <tr>
-         <th ng-click="loadAllEvents()"><span class="glyphicon glyphicon-refresh"></span></th>
-         <th>Logs</th>
-      </tr>
-   </thead>
-   
-   <tbody>
-      <tr ng-repeat="e in events track by $index">
-         <td>{{1 + $index }}</td>
-         <td><p>{{e}}</p></td>
-      </tr>
-	</tbody>
-</table>
+    <H3 style="text-align: center"> Server Events </H3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th ng-click="loadAllEvents()"><span class="glyphicon glyphicon-refresh"></span></th>
+                <th>Logs</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="e in events track by $index">
+                <td>{{1 + $index }}</td>
+                <td>
+                    <p>{{e}}</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
