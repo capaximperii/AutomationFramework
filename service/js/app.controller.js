@@ -33,6 +33,25 @@ app.config(function ($stateProvider) {
 					controller: 'serverEventsCtrl'
 				}
 			}
+		})
+		.state('manage', {
+			parent: 'menubar-page',
+			url: '/manage',
+			views: {
+				'content@': {
+					templateUrl: '/html/manage.html',
+					controller: 'manageCtrl'
+				}
+			}
+		}).state('help', {
+			parent: 'menubar-page',
+			url: '/help',
+			views: {
+				'content@': {
+					templateUrl: '/html/help.html',
+				}
+			}
 		});
+
 
 	});

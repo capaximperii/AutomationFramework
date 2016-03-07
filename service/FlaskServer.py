@@ -223,6 +223,20 @@ def api_getStats():
 		response['testoutput'].append(output)
 	return json.dumps(response)
 
+@app.route('/api/manage', methods=['GET', 'POST'])
+def api_manageConfiguration():
+	response = ""
+	if request.method == 'GET':
+		print os.system('tar zcf service/assets/backup.tgz config')
+		response = {'url': "/assets/backup.tgz", 'message': 'Download file'}
+	else:
+		data = request.files['file'].read()
+		with open('service/assets/backup.tgz', 'wb') as f:
+			f.write(data)
+			f.close()
+		os.system("tar zxf service/assets/backup.tgz")
+		response = {'url': "/assets/backup.tgz", 'message': 'Uploaded file'}
+	return json.dumps(response)
 
 # Helper methods
 def getPayload():
