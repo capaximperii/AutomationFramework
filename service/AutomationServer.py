@@ -196,7 +196,6 @@ def api_launch():
 	ip = data['ip']
 	response = {'message': 'Launched ' + ip}
 	serverConfig = LoadConfig()
-
 	sshaction = ip + " " + serverConfig['username'] + " " + serverConfig['password'] + " " + serverConfig["installPath"] + " " + serverConfig["downloadUrl"] + " reset\n"
 	with open("/tmp/colonize", "w") as f:
 		f.write(sshaction)
@@ -264,14 +263,14 @@ Load test case configuration from disk. Called by thinclient method.
 def LoadConfig():
 	serverConfig = {};
 	filename = "service/config/server.ini"
-    config = ConfigParser.ConfigParser()
-    config.read(filename)
-    for c in config.sections():
-        serverConfig['downloadUrl'] = config.get(c , "downloadUrl")
-        serverConfig['username'] = config.get(c , "username")
-        serverConfig['password'] = config.get(c , "password")
-        serverConfig['installPath'] = config.get(c , "installPath")        
-    return serverConfig
+	config = ConfigParser.ConfigParser()
+	config.read(filename)
+	for c in config.sections():
+		serverConfig['downloadUrl'] = config.get(c , "downloadUrl")
+		serverConfig['username'] = config.get(c , "username")
+		serverConfig['password'] = config.get(c , "password")
+		serverConfig['installPath'] = config.get(c , "installPath")        
+	return serverConfig
 
 # Colonize thread
 def AgentInstaller():
