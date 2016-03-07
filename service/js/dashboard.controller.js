@@ -65,9 +65,9 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource
 	}
 
 	$scope.launch = function(client) {
-		client = response = {'ip': client.ip, 'history':0, 'current':0 ,'progress':0 };
+		client = {'ip': client.ip, 'history':0, 'current':0 ,'progress':0 };
 		ClientsResource.update(client , function(message) {
-			$scope.message = message;
+			$scope.message = "Remote installer initiated for " + client.ip;
 		});	
 	}
 	

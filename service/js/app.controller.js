@@ -43,6 +43,15 @@ app.config(function ($stateProvider) {
 					controller: 'manageCtrl'
 				}
 			}
+		}).state('settings', {
+			parent: 'menubar-page',
+			url: '/settings',
+			views: {
+				'content@': {
+					templateUrl: '/html/settings.html',
+					controller: 'settingsCtrl'
+				}
+			}
 		}).state('help', {
 			parent: 'menubar-page',
 			url: '/help',

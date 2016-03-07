@@ -237,6 +237,25 @@ def api_manageConfiguration():
 		response = {'url': "/assets/backup.tgz", 'message': 'Uploaded file'}
 	return json.dumps(response)
 
+@app.route('/api/settings', methods=['GET', 'PUT'])
+def api_manageSettings():
+	response = None
+	if request.method == 'GET':
+		response = LoadConfig()
+	else:
+		config = request.json
+		response = config
+		cfgfile = open("config/server/server.ini", 'w')
+		cfgfile.write("[Server]\n")
+		cfgfile.write('downloadUrl = '+ config['downloadUrl'] + "\n")
+		cfgfile.write('username = ' + config['username'] + "\n")
+		cfgfile.write('password = ' + config['password'] + "\n")
+		cfgfile.write('installPath = ' + config['installPath'] + "\n")
+		cfgfile.write("\n\n")
+		cfgfile.close();
+	return json.dumps(response) 
+
+
 # Helper methods
 def getPayload():
 	client = request.remote_addr
@@ -262,7 +281,7 @@ Load test case configuration from disk. Called by thinclient method.
 """    
 def LoadConfig():
 	serverConfig = {};
-	filename = "service/config/server.ini"
+	filename = "config/server/server.ini"
 	config = ConfigParser.ConfigParser()
 	config.read(filename)
 	for c in config.sections():
