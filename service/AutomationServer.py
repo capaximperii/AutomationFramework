@@ -258,6 +258,11 @@ def api_manageSettings():
 		if not os.path.exists('config/profiles/' + config['profile']):
 			shutil.copytree('config/profiles/root', 'config/profiles/' + config['profile'])
 		LoadServerConfig()
+	d = "config/profiles"
+	profiles = [os.path.join(d,o) for o in os.listdir(d) if os.path.isdir(os.path.join(d,o))]
+	response['profileMessage'] = ""
+	for p in profiles:
+		response['profileMessage'] += p.replace("config/profiles/", " ")
 	return json.dumps(response) 
 
 
