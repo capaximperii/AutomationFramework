@@ -28,6 +28,7 @@ app.controller('configureCtrl', function ($scope, close, client, TestsResource) 
 	}
 
 	$scope.addTest = function() {
+		var rank = $scope.selectedTests.length + 1;
 		var copy = angular.extend({}, $scope.currentTest);
 		for(var i =0; i < $scope.variables.length; i ++ ) {
 			for(var j = 0; j < copy.commands.length; j ++ ) {
@@ -37,6 +38,7 @@ app.controller('configureCtrl', function ($scope, close, client, TestsResource) 
 				}
 			}
 		}
+		copy.name = copy.name + '-' + rank
 		$scope.selectedTests.push(copy);
 	}
 
