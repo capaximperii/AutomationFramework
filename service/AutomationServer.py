@@ -302,4 +302,4 @@ def AgentInstaller():
 
 if __name__ == '__main__':
 	thread.start_new_thread( AgentInstaller, ())
-	app.run(host='0.0.0.0', port=8080)
+	app.run(host='0.0.0.0', port=8080, threaded=True)
