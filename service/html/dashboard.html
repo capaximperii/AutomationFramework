@@ -23,7 +23,7 @@
                 <td>{{client.progress + ' %'}}</td>
                 <td ng-click="showStats(client)"><span class="glyphicon glyphicon-fullscreen"></span></td>
                 <td ng-click="configure(client)"><span class="glyphicon glyphicon-cog"></span></td>
-                <td ng-show="client.progress == 0 && client.ip.indexOf('*') < 0" ng-click="launch(client)">
+                <td ng-show="(client.progress == 0 || client.progress == 100) && client.ip.indexOf('*') < 0" ng-click="launch(client)">
                     <span class="glyphicon glyphicon-play-circle"></span>
                 </td>
                 <td ng-show="client.progress != 0 || client.ip.indexOf('*') >= 0">
