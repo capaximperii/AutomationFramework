@@ -9,6 +9,19 @@
 				</h4>
             </div>
             <div class="modal-body">
+
+ <div class="progress">
+  <div class="progress-bar progress-bar-success" role="progressbar"
+	ng-style="{width: + getPercent('Pass') + '%'}">
+  </div>
+  <div class="progress-bar progress-bar-danger" role="progressbar"
+	ng-style="{width: + getPercent('Fail') + '%'}">
+  </div>
+  <div class="progress-bar progress-bar-warning active" role="progressbar"
+	ng-style="{width: getPercent('Running') + '%'}">
+  </div>
+</div>
+
                 <div>
                     <div class="table-responsive">
                         <table class="table">
@@ -29,7 +42,12 @@
                                     <td style="white-space:pre">{{test.commands}}</td>
                                     <td>{{test.starttime}}</td>
                                     <td>{{test.endtime}}</td>
-                                    <td>{{test.result}}</td>
+                                    <td>
+					<span class="label" 
+						ng-class="{'label-success': test.result == 'Pass',
+						'label-warning': test.result == 'Running',
+						'label-danger': test.result == 'Fail',
+						'label-default': test.result == 'Pending'}">{{test.result}}</span></td>
                                 </tr>
                             </tbody>
                         </table>
