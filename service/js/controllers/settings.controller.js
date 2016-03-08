@@ -10,7 +10,9 @@ app.controller('settingsCtrl', function ($scope, $state, SettingsResource) {
 	}
 
 	$scope.saveSettings = function() {
-		SettingsResource.update($scope.settings);
+		SettingsResource.update($scope.settings, function(result) {
+			$scope.message = "Settings have been saved."
+		});
 	}
 	$scope.loadAllSettings();
 });
