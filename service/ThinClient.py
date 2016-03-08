@@ -9,7 +9,7 @@ from SuperReport import *
 import shutil
 
 KNOWN_CLIENTS = {}
-
+serverGlobalConfig = {}
 
 ## keep a js here just in case needed to alter report in future, replace this
 
@@ -162,13 +162,13 @@ class ThinClient:
 		for r in range(0,4):
 			stars = ".*" * r
 			fname = self.address.rsplit(".", r)[0] + stars + ".ini"
-			if os.path.exists(os.path.join("config", "clients", fname)):
-				self.configPath = os.path.join("config", "clients", fname)
+			if os.path.exists(os.path.join("config/profiles/", serverGlobalConfig['profile'], "clients", fname)):
+				self.configPath = os.path.join("config/profiles/", serverGlobalConfig['profile'], "clients", fname)
 				break
 		print "Loading %s for client %s" %(self.configPath, self.address)
-		if not self.configPath.startswith('config/clients/' + self.address + '.ini'):
-			shutil.copyfile(self.configPath, 'config/clients/' + self.address + '.ini')
-			self.configPath = "config/clients/" + self.address + ".ini"
+		if not self.configPath.startswith("config/profiles/" + serverGlobalConfig['profile'] + "/clients/" + self.address + ".ini"):
+			shutil.copyfile(self.configPath, "config/profiles/" + serverGlobalConfig['profile'] + "/clients/" + self.address + ".ini")
+			self.configPath = "config/profiles/" + serverGlobalConfig['profile'] +"/clients/" + self.address + ".ini"
 		return TestCase.LoadFromDisk(self.configPath)
 	"""
 	Compute UUID for the client.

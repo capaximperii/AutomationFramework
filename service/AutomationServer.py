@@ -5,10 +5,12 @@ import json
 import select
 import thread
 import urllib
+import shutil
 from Colonize import Colonize
 from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
+from ThinClient import serverGlobalConfig
 from TestCase import TestCase
 import ConfigParser
 
@@ -16,7 +18,6 @@ app = Flask("AutomationFramework")
 app.debug = 1
 
 # Simple rule for static html files
-
 @app.route('/')
 def root():
 	return redirect("/html/index.html", code=302)
@@ -128,7 +129,7 @@ def api_getClient():
 			client = KNOWN_CLIENTS[k]
 			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
 			response.append(description)
-		configPath = "config/clients/"
+		configPath = "config/profiles/" + serverGlobalConfig['profile'] +"/clients/"
 		files = [f for f in os.listdir(configPath) if os.path.isfile(os.path.join(configPath, f))]
 		for f in files:
 			if 'default.ini' in f:
@@ -171,9 +172,9 @@ def api_getTests():
 	clientId = request.args.get('ip', None)
 	response = []
 	if (clientId == None):
-		bank = TestCase.LoadFromDisk("config/tests/testbank.ini")
+		bank = TestCase.LoadFromDisk("config/profiles/" + serverGlobalConfig['profile'] + "/tests/testbank.ini")
 	else:
-		bank = TestCase.LoadFromDisk('config/clients/' + clientId + '.ini')
+		bank = TestCase.LoadFromDisk("config/profiles/" + serverGlobalConfig['profile'] + "/clients/" + clientId + ".ini")
 	for t in bank:
 		response.append(t.toJSON())
 	return json.dumps(response)
@@ -195,7 +196,7 @@ def api_launch():
 	data = request.json
 	ip = data['ip']
 	response = {'message': 'Launched ' + ip}
-	serverConfig = LoadConfig()
+	serverConfig = LoadServerConfig()
 	sshaction = ip + " " + serverConfig['username'] + " " + serverConfig['password'] + " " + serverConfig["installPath"] + " " + serverConfig["downloadUrl"] + " reset\n"
 	with open("/tmp/colonize", "w") as f:
 		f.write(sshaction)
@@ -241,7 +242,7 @@ def api_manageConfiguration():
 def api_manageSettings():
 	response = None
 	if request.method == 'GET':
-		response = LoadConfig()
+		response = LoadServerConfig()
 	else:
 		config = request.json
 		response = config
@@ -251,8 +252,12 @@ def api_manageSettings():
 		cfgfile.write('username = ' + config['username'] + "\n")
 		cfgfile.write('password = ' + config['password'] + "\n")
 		cfgfile.write('installPath = ' + config['installPath'] + "\n")
+		cfgfile.write('profile = ' + config['profile'] + "\n")
 		cfgfile.write("\n\n")
 		cfgfile.close();
+		if not os.path.exists('config/profiles/' + config['profile']):
+			shutil.copytree('config/profiles/root', 'config/profiles/' + config['profile'])
+		LoadServerConfig()
 	return json.dumps(response) 
 
 
@@ -279,17 +284,17 @@ def ContactClient(cid, response):
 """
 Load test case configuration from disk. Called by thinclient method.
 """    
-def LoadConfig():
-	serverConfig = {};
+def LoadServerConfig():
 	filename = "config/server/server.ini"
 	config = ConfigParser.ConfigParser()
 	config.read(filename)
 	for c in config.sections():
-		serverConfig['downloadUrl'] = config.get(c , "downloadUrl")
-		serverConfig['username'] = config.get(c , "username")
-		serverConfig['password'] = config.get(c , "password")
-		serverConfig['installPath'] = config.get(c , "installPath")        
-	return serverConfig
+		serverGlobalConfig['downloadUrl'] = config.get(c , "downloadUrl")
+		serverGlobalConfig['username'] = config.get(c , "username")
+		serverGlobalConfig['password'] = config.get(c , "password")
+		serverGlobalConfig['installPath'] = config.get(c , "installPath")        
+		serverGlobalConfig['profile'] = config.get(c , "profile")        
+	return serverGlobalConfig
 
 # Colonize thread
 def AgentInstaller():
@@ -301,5 +306,6 @@ def AgentInstaller():
 		c.prepare()
 
 if __name__ == '__main__':
+	LoadServerConfig()
 	thread.start_new_thread( AgentInstaller, ())
 	app.run(host='0.0.0.0', port=8080, threaded=True)
