@@ -7,7 +7,7 @@ app.controller('configureCtrl', function ($scope, close, client, TestsResource) 
 	$scope.client = client;
 	$scope.variables = [];
 	$scope.currentTest = null;
-
+	$scope.filterText = "";
 
 	$scope.loadAllTests = function() {
 		TestsResource.query(function(tests){
@@ -73,7 +73,12 @@ app.controller('configureCtrl', function ($scope, close, client, TestsResource) 
 			$scope.message = result.message;
 		});
 	}
-
+    
+    $scope.filterTests = function(test) {
+    	if($scope.filterText.length == 0) return true;
+    	var regExp = new RegExp($scope.filterText, "i");
+    	return test.name.match(regExp);
+    }
 	$scope.loadAllTests();
 	$scope.findOne(client.ip);
 });

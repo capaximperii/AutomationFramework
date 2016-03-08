@@ -5,6 +5,12 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="close(null, 200)">
                     &times;</button>
                 <h4 class="modal-title">Configure {{client.ip}}</h4>
+                
+                <div class="col-xs-6 col-sm-3 col-md-3 pull-right">
+                        <i class="icon-search"></i>
+                        <input ng-model="filterText" type="search" class="form-control" placeholder="Filter"/>
+                </div>
+
             </div>
             <div class="modal-body">
                 <div class="container-fluid">
@@ -14,7 +20,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"> {{currentTest.name || 'Select a test' }}<span class="caret"></span></button>
                                 <ul class="dropdown-menu">
-                                    <li class="list-group-item" ng-repeat="t in allTests" ng-click="selectTest(t)">
+                                    <li class="list-group-item" ng-repeat="t in allTests | filter: filterTests" ng-click="selectTest(t)">
                                         {{t.name}}</li>
                                 </ul>
                             </div>
@@ -35,7 +41,7 @@
                         <div class="col-sm-9 col-md-6 col-lg-8">
                             <h4> Click a test to delete </h4>
                             <div class="list-group">
-                                <button type="button" class="list-group-item" ng-repeat="t in selectedTests" ng-click="removeTest(t)">{{t.name}}</button>
+                                <button type="button" class="list-group-item" ng-repeat="t in selectedTests | filter: filterTests" ng-click="removeTest(t)">{{t.name}}</button>
                             </div>
                         </div>
                     </div>
