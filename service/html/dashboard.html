@@ -1,5 +1,9 @@
 <div>
-    <H3 style="text-align: center"> Dashboard </H3>
+    <h3 style="text-align: center">
+        <span ng-click="loadAllClients()">
+        Dashboard
+        <small class="pull-right glyphicon glyphicon-refresh" style="right: 40px"></small></span>
+    </h3>
     <div class="alert alert-success">
         <strong ng-show="message">{{message}}</strong>
     </div>
@@ -11,7 +15,7 @@
                 <th>Running </th>
                 <th>Progress</th>
                 <th>Stats</th>
-                <th ng-click="loadAllClients()"><span class="glyphicon glyphicon-refresh"></span></th>
+                <th>Edit</th>
                 <th><span class="glyphicon glyphicon-hand-down"></span></th>
             </tr>
         </thead>
@@ -36,8 +40,8 @@
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Add a new client or subnet" ng-model="newclient.ip">
             <span class="input-group-btn">
-   <button class="btn btn-default" type="button" ng-click="addClient(newclient)">
-      <span class="glyphicon glyphicon-plus-sign"></span>
+                <button class="btn btn-default" type="button" ng-click="addClient(newclient)">
+                <span class="glyphicon glyphicon-plus-sign"></span>
             </button>
             </span>
         </div>
