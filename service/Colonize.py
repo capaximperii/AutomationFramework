@@ -1,6 +1,6 @@
 import os
 import time
-import pxssh
+from pexpect import pxssh
 import socket
 import struct
 import thread
