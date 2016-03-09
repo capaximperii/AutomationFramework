@@ -52,6 +52,15 @@ app.config(function ($stateProvider) {
 					controller: 'settingsCtrl'
 				}
 			}
+		}).state('remote', {
+			parent: 'menubar-page',
+			url: '/remote',
+			views: {
+				'content@': {
+					templateUrl: '/html/remote.html',
+					controller: 'remoteInstallerCtrl'
+				}
+			}
 		}).state('help', {
 			parent: 'menubar-page',
 			url: '/help',
@@ -61,6 +70,4 @@ app.config(function ($stateProvider) {
 				}
 			}
 		});
-
-
 	});

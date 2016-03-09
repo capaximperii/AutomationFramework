@@ -7,7 +7,6 @@ import thread
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
 
-
 # The pipe contains command in this order
 IPADDR=0
 USER=1
@@ -17,6 +16,7 @@ URL=4
 RESET=5
 
 REMOTE_CLIENTS = {}
+REMOTE_CLIENTS_EVENTS = {}
 
 class Colonize:
     def __init__(self):
@@ -60,6 +60,7 @@ class Colonize:
                 destDir  = clientInfo[DIR].strip()
                 dloadUrl = clientInfo[URL].strip()
                 reset = clientInfo[RESET].strip() == "reset"
+                REMOTE_CLIENTS_EVENTS[hostname] = "Installing"
                 ssh.login(hostname, username, password)
                 print ssh.before
                 ssh.sendline("export DISPLAY=:0")   # cd to directory where you want to install
@@ -91,8 +92,10 @@ class Colonize:
                 ssh.logout()
                 cid = ThinClient.ComputeClientID(hostname)
                 REMOTE_CLIENTS[cid] = (hostname, ' '.join(clientInfo))
+                REMOTE_CLIENTS_EVENTS[hostname] = "Installed"
             except Exception as e:
                 print "Remote install failed for :",' '.join(clientInfo)
+                REMOTE_CLIENTS_EVENTS[hostname] = "Install Failed"
 
     def __del__(self):
         self.fifo.close()
@@ -117,6 +120,8 @@ class Zombie:
                 else:
                     print "Client", REMOTE_CLIENTS[c], "has a failed install, most probably permissions or download url."
                     print "Removing from monitor list"
+                    hostname, clientInfo = REMOTE_CLIENTS[c]
+                    REMOTE_CLIENTS_EVENTS[hostname] = "Removed from monitor list"
                     del REMOTE_CLIENTS[c]
 
     def checkFrankenstein(self, hostname):

@@ -10,6 +10,7 @@ from Colonize import Colonize
 from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
+from Colonize import REMOTE_CLIENTS_EVENTS
 from ThinClient import serverGlobalConfig
 from TestCase import TestCase
 import ConfigParser
@@ -265,6 +266,10 @@ def api_manageSettings():
 		response['profileMessage'] += p.replace("config/profiles/", " ")
 	return json.dumps(response) 
 
+@app.route('/api/remoteInstaller', methods=['GET'])
+def api_getRemoteInstallerEvents():
+	response = REMOTE_CLIENTS_EVENTS
+	return json.dumps(response)
 
 # Helper methods
 def getPayload():

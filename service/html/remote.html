@@ -1,0 +1,27 @@
+<div>
+    <H3 style="text-align: center">
+    	 <small ng-click="loadRemoteInstaller()"><span class="glyphicon glyphicon-refresh"></span></small>
+	Remote Installer Events</H3>
+<table class = "table table-striped">   
+   <thead>
+      <tr>
+         <th>Client</th>
+         <th>Status</th>
+      </tr>
+   </thead>
+   
+   <tbody>
+      <tr ng-repeat="(address, status) in clients">
+         <td>{{address}}</td>
+         <td>
+          <span ng-class="{'label': true, 
+          'label-success': status == 'Installed',
+          'label-danger': status == 'Install Failed',
+          'label-warning': status == 'Installing',
+          'label-default': status == 'Removed from monitor list'}">{{status}}</span></td>
+      </tr>
+   </tbody>
+</table>
+
+
+</div>
