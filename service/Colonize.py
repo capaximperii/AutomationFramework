@@ -6,6 +6,7 @@ import struct
 import thread
 from ThinClient import ThinClient
 from ThinClient import KNOWN_CLIENTS
+from ThinClient import serverGlobalConfig
 
 # The pipe contains command in this order
 IPADDR=0
@@ -79,11 +80,12 @@ class Colonize:
                 ssh.sendline('tar zxf client.tgz') # unzip the package
                 print ssh.before
                 ssh.prompt()
+                url = 'http://' + self.address + ':' + portserverGlobalConfig['port']
                 if (reset == True):
-                    cmd = 'setsid python agent/AutomationAgent.py server http://' + self.address + ':8080 --debug >'+ os.path.join(destDir, 'automation-console.log') +' 2>&1 &'
+                    cmd = 'setsid python agent/AutomationAgent.py server ' + url + ' --debug >'+ os.path.join(destDir, 'automation-console.log') +' 2>&1 &'
                     clientInfo[RESET] = "noreset"
                 else:
-                    cmd = 'setsid python agent/AutomationAgent.py server http://' + self.address + ':8080 --debug --noreset >'+ os.path.join(destDir, 'automation-console.log') +' 2>&1 &'
+                    cmd = 'setsid python agent/AutomationAgent.py server ' + url + ' --debug --noreset >'+ os.path.join(destDir, 'automation-console.log') +' 2>&1 &'
                 print cmd
                 ssh.sendline(cmd)
                 ssh.prompt()
@@ -107,7 +109,8 @@ class Zombie:
 
     def awakenDead(self):
         while True:
-            time.sleep(120)
+            duration = int(serverGlobalConfig['zombieInterval'])
+            time.sleep(duration)
             for c in REMOTE_CLIENTS.keys():
                 if c in KNOWN_CLIENTS.keys():
                     client = KNOWN_CLIENTS[c]
@@ -117,7 +120,7 @@ class Zombie:
                             print "Reviving Client", hostname, "since it seems dead"
                             self.doAlchemy(clientInfo)
 
-                else:
+                if REMOTE_CLIENTS_EVENTS[c] is "Install Failed":
                     print "Client", REMOTE_CLIENTS[c], "has a failed install, most probably permissions or download url."
                     print "Removing from monitor list"
                     hostname, clientInfo = REMOTE_CLIENTS[c]
@@ -132,6 +135,9 @@ class Zombie:
             f.write(clientInfo)
             f.close()
 
+    def __del__(self):
+        print "Zombies are not immortal"
+        
 #unit test
 if __name__=='__main__':
     c = Colonize()

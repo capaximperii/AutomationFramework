@@ -247,13 +247,11 @@ def api_manageSettings():
 	else:
 		config = request.json
 		response = config
+		config.pop('profileMessage')
 		cfgfile = open("config/server/server.ini", 'w')
 		cfgfile.write("[Server]\n")
-		cfgfile.write('downloadUrl = '+ config['downloadUrl'] + "\n")
-		cfgfile.write('username = ' + config['username'] + "\n")
-		cfgfile.write('password = ' + config['password'] + "\n")
-		cfgfile.write('installPath = ' + config['installPath'] + "\n")
-		cfgfile.write('profile = ' + config['profile'] + "\n")
+		for cfg in config.keys():
+			cfgfile.write(cfg + ' = ' + config[cfg] + "\n")
 		cfgfile.write("\n\n")
 		cfgfile.close();
 		if not os.path.exists('config/profiles/' + config['profile']):
@@ -280,7 +278,6 @@ def getPayload():
 	if cid not in KNOWN_CLIENTS.keys():
 		print "Client %s assigned CID %s"%(client, cid)
 		KNOWN_CLIENTS[cid] = ThinClient(client)
-		#KNOWN_CLIENTS[cid].reset()
 	elif cid in KNOWN_CLIENTS.keys():
 		print "Resuming client from where it last left", client
 	arg = json.loads(data)[2]
@@ -299,10 +296,12 @@ def LoadServerConfig():
 	config = ConfigParser.ConfigParser()
 	config.read(filename)
 	for c in config.sections():
+		serverGlobalConfig['port'] = config.get(c , "port")
 		serverGlobalConfig['downloadUrl'] = config.get(c , "downloadUrl")
 		serverGlobalConfig['username'] = config.get(c , "username")
 		serverGlobalConfig['password'] = config.get(c , "password")
 		serverGlobalConfig['installPath'] = config.get(c , "installPath")        
+		serverGlobalConfig['zombieInterval'] = config.get(c , "zombieInterval")        
 		serverGlobalConfig['profile'] = config.get(c , "profile")        
 	return serverGlobalConfig
 
@@ -317,5 +316,6 @@ def AgentInstaller():
 
 if __name__ == '__main__':
 	LoadServerConfig()
+	port = int(serverGlobalConfig['port'])
 	thread.start_new_thread( AgentInstaller, ())
-	app.run(host='0.0.0.0', port=8080, threaded=True)
+	app.run(host='0.0.0.0', port=port, threaded=True)

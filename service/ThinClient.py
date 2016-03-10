@@ -221,9 +221,10 @@ class ThinClient:
 	"""
 	"""
 	def isZombie(self):
+		zombieInterval = int(serverGlobalConfig['zombieInterval'])
 		if len(self.completed) == len(self.testsuite):
 			return False
-		elif self.getTimeSinceLastSeen() > 120 and self.testsuite[len(self.completed)].result == 'Pending':
+		elif self.getTimeSinceLastSeen() > zombieInterval and self.testsuite[len(self.completed)].result == 'Pending':
 			return True
 		return False
 

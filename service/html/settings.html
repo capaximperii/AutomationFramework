@@ -6,6 +6,12 @@
 
     <form class="form-horizontal" role="form">
         <div class="form-group">
+            <label for="port" class="col-sm-2 control-label">Port</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="port" placeholder="Enter port for server" ng-model="settings.port">
+            </div>
+        </div>
+        <div class="form-group">
             <label for="downloadUrl" class="col-sm-2 control-label">Download Url</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="downloadUrl" placeholder="Enter URL to download client.tgz" ng-model="settings.downloadUrl">
@@ -27,6 +33,13 @@
             <label for="password" class="col-sm-2 control-label">Password</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="password" placeholder="Enter Password" ng-model="settings.password">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="zombieInterval" class="col-sm-2 control-label">Zombie interval</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="zombieInterval" placeholder="Enter interval for zombie check"
+                    ng-model="settings.zombieInterval">
             </div>
         </div>
         <div class="form-group">
