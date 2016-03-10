@@ -7,6 +7,7 @@ from datetime import datetime
 from TestCase import TestCase
 from SuperReport import *
 import shutil
+import copy
 
 KNOWN_CLIENTS = {}
 serverGlobalConfig = {}
@@ -132,7 +133,11 @@ class ThinClient:
 		for test in testsuitedup:
 			if test.rank <= torank:
 				stopindex +=1
-		repeatlist = testsuitedup[startindex:stopindex] * times
+		repeatlist = []
+		while times > 0:
+			times = times - 1
+			repeatlist.extend(copy.deepcopy(testsuitedup[startindex:stopindex]))
+
 		self.testsuite.extend(repeatlist)
 		result = json.dumps(("Pass", "Tests repeat added", "Repeating tests clears logs."))
 		self.recieveResult(result)
