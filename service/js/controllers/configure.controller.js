@@ -1,6 +1,6 @@
 var app = angular.module('AF');
 
-app.controller('configureCtrl', function ($scope, close, client, TestsResource) {
+app.controller('configureCtrl', function ($scope, close, client, ModalService, TestsResource) {
 	$scope.allTests = [];
 	$scope.selectedTests =[];
 	$scope.close = close;
@@ -69,16 +69,41 @@ app.controller('configureCtrl', function ($scope, close, client, TestsResource) 
 	}
 
 	$scope.save = function() {
-		TestsResource.update({ip: client.ip, config: JSON.stringify($scope.selectedTests)}, function(result){
+		TestsResource.update({ip: client.ip, config: JSON.stringify($scope.selectedTests)},
+		function(result){
 			$scope.message = result.message;
 		});
 	}
     
-    $scope.filterTests = function(test) {
-    	if($scope.filterText.length == 0) return true;
-    	var regExp = new RegExp($scope.filterText, "i");
-    	return test.name.match(regExp);
-    }
-	$scope.loadAllTests();
-	$scope.findOne(client.ip);
+	$scope.showMindmapPopup = function () {
+		var mindmap = {name: $scope.client.ip};
+		mindmap.children = [];
+		angular.forEach($scope.selectedTests, function(t){
+			var test = {name: t.name };
+			test.children = [];
+			angular.forEach(t.commands, function(command){
+				test.children.push({name: command});
+			});
+			mindmap.children.push(test);
+		});
+
+		ModalService.showModal({
+			templateUrl: '/html/mindmap.html',
+			inputs: {
+			    ip: $scope.client.ip,
+			    tests: mindmap
+			},
+			controller: 'mindCtrl' 
+			}).then(function(modal) {
+			  modal.element.modal();
+			});
+		}
+
+		$scope.filterTests = function(test) {
+			if($scope.filterText.length == 0) return true;
+			var regExp = new RegExp($scope.filterText, "i");
+			return test.name.match(regExp);
+		}
+		$scope.loadAllTests();
+		$scope.findOne(client.ip);
 });
