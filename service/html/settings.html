@@ -7,51 +7,53 @@
     <form class="form-horizontal" role="form">
         <div class="form-group">
             <label for="port" class="col-sm-2 control-label">Port</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="port" placeholder="Enter port for server" ng-model="settings.port">
+            <div class="col-sm-8 input-group">
+                <input type="text" class="form-control" id="port" placeholder="Enter port for server" ng-model="settings.port" aria-describedby="portAddon">
+                  <span class="input-group-addon" id="portAddon">Requires server restart</span>
             </div>
         </div>
         <div class="form-group">
             <label for="downloadUrl" class="col-sm-2 control-label">Download Url</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="downloadUrl" placeholder="Enter URL to download client.tgz" ng-model="settings.downloadUrl">
+            <div class="col-sm-8 input-group">
+                <input type="url" class="form-control" id="downloadUrl" placeholder="Enter URL to download client.tgz" ng-model="settings.downloadUrl">
             </div>
         </div>
         <div class="form-group">
             <label for="installPath" class="col-sm-2 control-label">Install Path</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8 input-group">
                 <input type="text" class="form-control" id="installPath" placeholder="Install path" ng-model="settings.installPath">
             </div>
         </div>
         <div class="form-group">
             <label for="username" class="col-sm-2 control-label">User Name</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8 input-group">
                 <input type="text" class="form-control" id="username" placeholder="Enter User Name" ng-model="settings.username">
             </div>
         </div>
         <div class="form-group">
             <label for="password" class="col-sm-2 control-label">Password</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8 input-group">
                 <input type="text" class="form-control" id="password" placeholder="Enter Password" ng-model="settings.password">
             </div>
         </div>
         <div class="form-group">
             <label for="zombieInterval" class="col-sm-2 control-label">Zombie interval</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="zombieInterval" placeholder="Enter interval for zombie check"
-                    ng-model="settings.zombieInterval">
+            <div class="col-sm-8 input-group">
+                <input type="text" class="form-control" id="zombieInterval" placeholder="Enter interval for zombie check" ng-model="settings.zombieInterval" aria-describedby="zIlabel">
+                <span class="input-group-addon" id="zIlabel">Seconds</span>
+
             </div>
         </div>
         <div class="form-group">
             <label for="profile" class="col-sm-2 control-label">Profile</label>
-            <div class="col-sm-10">
+            <div class="col-sm-8 input-group">
                 <input type="text" class="form-control" id="profile" placeholder="Enter Profile" ng-model="settings.profile">
                 <label>Available profiles are "{{settings.profileMessage}}"</label>
             </div>
         </div>
 
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="col-sm-offset-2 col-sm-8">
                 <button type="submit" class="btn btn-default" ng-click="saveSettings()">Save Settings</button>
             </div>
         </div>
