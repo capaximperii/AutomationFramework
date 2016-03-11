@@ -238,7 +238,7 @@ class ThinClient:
 	def findPreviousRuns(self):
 		history = []
 		if not os.path.exists("logs"):
-			return count
+			return history
 		logPath = "logs"
 		files = [f for f in os.listdir(logPath) if os.path.isfile(os.path.join(logPath, f))]
 		for f in files:
