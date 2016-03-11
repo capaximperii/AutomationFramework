@@ -100,6 +100,7 @@ class AutomationAgent:
             self.url = "/reset/yes"
         elif testresult in ["Skip"]:
             self.url = "/reset/yes"
+        self.tee("Sending response: " + testresult)
         self.payload = encoded
         self.contactServer()
 

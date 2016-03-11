@@ -27,7 +27,7 @@ class ThinClient:
 		self.template = os.path.join("service","html","template.html")
 		self.html = os.path.join("html",address + ".html")
 		self.superreport = ""
-		self.history = self.findPreviousRunsCount()
+		self.history = self.findPreviousRuns()
 		self.reset()
 
 	"""
@@ -235,16 +235,22 @@ class ThinClient:
 
 	"""
 	"""
-	def findPreviousRunsCount(self):
-		count = 0
+	def findPreviousRuns(self):
+		history = []
 		if not os.path.exists("logs"):
 			return count
 		logPath = "logs"
 		files = [f for f in os.listdir(logPath) if os.path.isfile(os.path.join(logPath, f))]
 		for f in files:
-			if self.address in f:
-				count += 1
-		return count 
+			if 'thinclient-' + self.address + '-' in f:
+				with open(os.path.join(logPath, f)) as contents:
+					runlog = contents.read()
+					contents.close()
+					passed = runlog.count('Sending response: Pass') 
+					failed = runlog.count('Sending response: Fail')
+					total = runlog.count('Sending response') 
+					history.append({'passed': passed, 'failed': failed, 'total': total})
+		return history
 	"""
 	"""
 	def getTimeSinceLastSeen(self):

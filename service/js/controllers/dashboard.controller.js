@@ -88,5 +88,26 @@ app.controller('dashboardCtrl', function ($scope, ClientsResource, StatsResource
 		});
 	}
 
+	$scope.showHistoryPopup = function(client) {
+		ModalService.showModal({
+			templateUrl: '/html/history.html',
+			inputs: {
+			    client: client,
+			},
+			controller: function($scope, client, close) { 
+	            $scope.client = client;
+	            $scope.close = close;
+
+	            $scope.getPercent = function(n, total) {
+	            	if (total <= 0) return 0;
+	            	return n/total * 100;
+	            }
+	          }
+			}).then(function(modal) {
+			  modal.element.modal();
+		});
+     }
+
+
 	$scope.loadAllClients();
 });
