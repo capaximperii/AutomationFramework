@@ -84,6 +84,7 @@ class ThinClient:
 		f = open(logPath, "w")
 		f.write(unserialized)
 		f.close()
+		self.history = self.findPreviousRuns()
 	"""
 	Receive raw data to include in the report file.
 	"""
