@@ -80,7 +80,7 @@ class Colonize:
                 ssh.sendline('tar zxf client.tgz') # unzip the package
                 print ssh.before
                 ssh.prompt()
-                url = 'http://' + self.address + ':' + portserverGlobalConfig['port']
+                url = 'http://' + self.address + ':' + serverGlobalConfig['port']
                 if (reset == True):
                     cmd = 'setsid python agent/AutomationAgent.py server ' + url + ' --debug >'+ os.path.join(destDir, 'automation-console.log') +' 2>&1 &'
                     clientInfo[RESET] = "noreset"
