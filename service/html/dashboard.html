@@ -23,9 +23,9 @@
             <tr ng-repeat="client in clients">
                 <td>{{ client.ip }}</td>
                 <td>
-                    <button ng-click="showHistoryPopup(client)" 
-                            type="button" class="btn btn-xs">{{client.history.length}}
-                    </button>
+                    <a style="cursor: pointer" ng-click="showHistoryPopup(client)" 
+                            type="button">{{client.history.length}}
+                    </a>
                 </td>
                 <td><span class="label"
         			ng-class="{'label-success': client.progress == 100,
