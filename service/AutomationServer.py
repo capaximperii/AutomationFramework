@@ -43,6 +43,14 @@ def send_css(path):
 def send_assets(path):
 	return send_from_directory('service/assets', path)
 
+@app.route('/reports/<path:path>')
+def send_reports(path):
+	return send_from_directory('service/storage/reports', path)
+
+@app.route('/logs/<path:path>')
+def send_logs(path):
+	return send_from_directory('service/storage/logs', path)
+
 
 # Built-in commands of AutomationFramework
 @app.route('/result', methods=['POST'])

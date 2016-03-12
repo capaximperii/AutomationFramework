@@ -242,14 +242,15 @@ class ThinClient:
 		logPath = "service/storage/logs/" + self.address
 		files = [f for f in os.listdir(logPath) if os.path.isfile(os.path.join(logPath, f))]
 		for f in files:
-			if 'client-' + self.address + '-' in f:
-				with open(os.path.join(logPath, f)) as contents:
-					runlog = contents.read()
-					contents.close()
-					passed = runlog.count('Sending response: Pass') 
-					failed = runlog.count('Sending response: Fail')
-					total = runlog.count('Sending response') 
-					history.append({'passed': passed, 'failed': failed, 'total': total})
+			with open(os.path.join(logPath, f)) as contents:
+				runlog = contents.read()
+				contents.close()
+				passed = runlog.count('Sending response: Pass') 
+				failed = runlog.count('Sending response: Fail')
+				total = runlog.count('Sending response')
+				timestamp = f.replace('client-' + self.address + '-', '').replace('.log', '')
+				history.append({'passed': passed, 
+					'failed': failed, 'total': total, 'timestamp': timestamp})
 		return history
 	"""
 	"""
