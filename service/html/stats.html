@@ -36,7 +36,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="test in stats.testoutput" ng-click="showConsolePopup(test)">
+                                <tr style="cursor: pointer" ng-repeat="test in stats.testoutput" ng-click="showConsolePopup(test)">
                                     <td>{{test.name}}</td>
                                     <td>{{test.desc}}</td>
                                     <td style="white-space:pre">{{test.commands}}</td>
