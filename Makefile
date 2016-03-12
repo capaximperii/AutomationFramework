@@ -1,8 +1,8 @@
 SHELL:=/bin/bash
-
+LOGLOCATION:=service/storage/logs
 server:
-	-@mkdir tmp
-	@python service/AutomationServer.py > >(tee tmp/serverlog.txt ) 2> >(tee tmp/serverlog.txt >&2)
+	@mkdir -p ${LOGLOCATION}
+	@python service/AutomationServer.py > >(tee ${LOGLOCATION}/serverlog.txt) 2> >(tee ${LOGLOCATION}/serverlog.txt >&2)
 
 client:
 	@python agent/AutomationAgent.py test --debug
@@ -19,6 +19,7 @@ recap:
 clean:
 	@echo "Removing py bytecode release and log files."
 	@rm -f $$(find . -name *.pyc)
+	@rm -rf service/storage
 	@rm -rf release
 	@rm -rf logs
 	@rm -rf html

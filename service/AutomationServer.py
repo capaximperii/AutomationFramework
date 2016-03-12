@@ -207,7 +207,7 @@ def api_launch():
 @app.route('/api/server', methods=['GET'])
 def api_getServerLogs():
 	response = ""
-	with open("tmp/serverlog.txt") as f:
+	with open("service/storage/logs/serverlog.txt") as f:
 		response = f.readlines()
 	return json.dumps(response)
 

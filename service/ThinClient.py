@@ -25,10 +25,11 @@ class ThinClient:
 		self.completed   = []
 		self.lastseen = str(datetime.now()).split('.')[0]
 		self.template = os.path.join("service","html","template.html")
-		self.html = os.path.join("html",address + ".html")
+		self.html = None
 		self.superreport = ""
-		self.history = self.findPreviousRuns()
+		self.storagePrefix = ""
 		self.reset()
+		self.history = self.findPreviousRuns()
 
 	"""
 	Returns the percentage of completion of test cases per client.
@@ -67,7 +68,6 @@ class ThinClient:
 			test.endtime = timenow
 			self.lastseen = timenow
 			self.completed.append(test)
-			#assert( len(self.result) == len(self.completed) )
 		else:
 			print "discarding rogue result " + str(result)
 	"""
@@ -76,11 +76,10 @@ class ThinClient:
 	def recieveLog(self, ClientLog):
 		unserialized = json.loads(ClientLog)
 		timenow = str(datetime.now()).split('.')[0]
-		logName = ("thinclient-" + self.address + "-" + timenow + ".log").replace(":","-")
-		if not os.path.exists("logs"):
-			os.mkdir("logs")
-		logPath = os.path.join("logs", logName)
-		print logPath
+		self.storagePrefix = ('client-' + self.address + "-" + timenow).replace(":","-")
+		logName = self.storagePrefix + ".log"
+		self.html = os.path.join("service/storage/reports/", self.address, self.storagePrefix + ".html")
+		logPath = os.path.join("service/storage/logs/" + self.address, logName)
 		f = open(logPath, "w")
 		f.write(unserialized)
 		f.close()
@@ -113,10 +112,10 @@ class ThinClient:
 	Reset the client information from the previous run if it exists.
 	"""
 	def reset(self):
-		if(os.path.exists(self.html)):
-			os.unlink(self.html)
-		if not os.path.exists(os.path.dirname(self.html)):
-			os.makedirs(os.path.dirname(self.html))
+		if not os.path.exists("service/storage/logs/" + self.address):
+			os.makedirs("service/storage/logs/" + self.address)
+		if not os.path.exists("service/storage/reports/" + self.address):
+			os.makedirs("service/storage/reports/" + self.address)
 		f = open(self.template)
 		lines = f.readlines()
 		self.superreport = "".join(lines)
@@ -238,12 +237,12 @@ class ThinClient:
 	"""
 	def findPreviousRuns(self):
 		history = []
-		if not os.path.exists("logs"):
+		if not os.path.exists("service/storage/logs"):
 			return history
-		logPath = "logs"
+		logPath = "service/storage/logs/" + self.address
 		files = [f for f in os.listdir(logPath) if os.path.isfile(os.path.join(logPath, f))]
 		for f in files:
-			if 'thinclient-' + self.address + '-' in f:
+			if 'client-' + self.address + '-' in f:
 				with open(os.path.join(logPath, f)) as contents:
 					runlog = contents.read()
 					contents.close()
