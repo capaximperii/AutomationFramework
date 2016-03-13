@@ -60,6 +60,13 @@ class Colonize:
                 password = clientInfo[PASSWORD].strip()
                 destDir  = clientInfo[DIR].strip()
                 dloadUrl = clientInfo[URL].strip()
+                if hostname in REMOTE_CLIENTS_EVENTS.keys():
+                    if REMOTE_CLIENTS_EVENTS[hostname] is "Installing":
+                        return
+                    cid = ThinClient.ComputeClientID(hostname)
+                    elif cid in KNOWN_CLIENTS.keys():
+                        if KNOWN_CLIENTS[cid].progress() > 0 and KNOWN_CLIENTS[cid].progress() < 100:
+                            return
                 reset = clientInfo[RESET].strip() == "reset"
                 REMOTE_CLIENTS_EVENTS[hostname] = "Installing"
                 ssh.login(hostname, username, password)
