@@ -13,6 +13,7 @@
                          <th>Total</th>
                          <th>Passed</th>
                          <th>Failed</th>
+                         <th>Built-in</th>
                 	 <th><span class="glyphicon glyphicon-stats"></span></th>
                 	 <th><span class="glyphicon glyphicon-file"></span></th>
                          <th></th>
@@ -23,6 +24,7 @@
                          <td>{{h.total}}</td>
                          <td>{{h.passed}}</td>
                          <td>{{h.failed}}</td>
+                         <td>{{h.total - h.passed - h.failed}}</td>
                          <td><a ng-href="/reports/{{client.ip}}/{{'client-' + client.ip + '-' + h.timestamp + '.html'}}"><span class="glyphicon glyphicon-fullscreen"></span></a></td>
                          <td><a ng-href="/logs/{{client.ip}}/{{'client-' + client.ip + '-' + h.timestamp + '.log'}}"><span class="glyphicon glyphicon-download"></span></a></td>
 
