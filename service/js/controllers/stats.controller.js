@@ -1,6 +1,6 @@
 var app = angular.module('AF');
 
-app.controller('statsCtrl', function ($scope, client, close, StatsResource, ModalService) {
+app.controller('statsCtrl', function ($scope, client, close, StatsResource, ClientsResource, ModalService) {
 	$scope.client = client;
 	$scope.stats = null;
 	$scope.close = close;
@@ -37,6 +37,20 @@ app.controller('statsCtrl', function ($scope, client, close, StatsResource, Moda
 		});
 
 		return count / total * 100;
+	}
+
+	$scope.isRunning = function() {
+		if ( $scope.stats == null ) return false;
+
+		for(var i=0; i < $scope.stats.testoutput.length; i ++)  {
+			var test = $scope.stats.testoutput[i];
+			if (test.result == "Pending")  return true;	
+		};
+		return false;
+	}
+
+	$scope.abort = function() {
+		ClientsResource.delete({ip: client.ip});
 	}
 
 	$scope.loadStatsForClient(client);

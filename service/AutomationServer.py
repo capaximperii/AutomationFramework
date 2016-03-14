@@ -212,6 +212,17 @@ def api_launch():
 		f.close()
 	return json.dumps(response)
 
+@app.route('/api/clients', methods=['DELETE'])
+def api_abort():
+	ip = request.args.get('ip', None)
+	cid = ThinClient.ComputeClientID(ip)
+	if cid in KNOWN_CLIENTS.keys():
+		client = KNOWN_CLIENTS[cid]
+		client.abort = True
+	response = {'message': 'Aborted ' + ip}
+	return json.dumps(response)
+
+
 @app.route('/api/server', methods=['GET'])
 def api_getServerLogs():
 	response = ""

@@ -26,6 +26,7 @@ class ThinClient:
 		self.lastseen = str(datetime.now()).split('.')[0]
 		self.template = os.path.join("service","html","template.html")
 		self.html = None
+		self.abort = False
 		self.superreport = ""
 		self.storagePrefix = ""
 		self.reset()
@@ -43,8 +44,13 @@ class ThinClient:
 	Send the next text case to be executed in order of rank.
 	"""
 	def sendTestCase(self):
-		if self.progress() == 100:
+		if self.abort == True and self.progress > 0:
+			while self.progress() != 100:
+				self.recieveResult(json.dumps(("Abort", "User forced abort.", "")))
+			self.abort = False
 			return "QuitAgent"
+		if self.progress() == 100:
+			return "QuitAgent"			
 		test = self.testsuite[len(self.completed)]
 		print "sending",test.name,"to",self.address
 		timenow = str(datetime.now()).split('.')[0]
