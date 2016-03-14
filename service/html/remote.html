@@ -1,8 +1,9 @@
 <div>
     <H3 style="text-align: center">
     	 <small ng-click="loadRemoteInstaller()" style="cursor: pointer"><span class="glyphicon glyphicon-refresh"></span></small>
-	Remote Installer Events</H3>
-<table class = "table table-striped">   
+	Remote Installer</H3>
+  <table class = "table table-striped">
+    <caption>Status</caption>
    <thead>
       <tr>
          <th>Client</th>
@@ -21,7 +22,35 @@
           'label-default': status == 'Removed from monitor list'}">{{status}}</span></td>
       </tr>
    </tbody>
-</table>
+  </table>
 
+  <table class = "table table-striped">
+      <caption>Schedules</caption>
+   <thead>
+      <tr>
+         <th>Client</th>
+         <th>Time</th>
+         <th></th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr ng-repeat="s in schedules">
+         <td>{{s.ip}}</td>
+         <td>{{s.date | date:"HH:mm"}}</td>
+         <td><span class="glyphicon glyphicon-minus" ng-click="removeSchedule(s)" style="cursor: pointer; color: red"></span></td>
+      </tr>
+   </tbody>
+  </table>
+  <form class="form-inline">
+  <div class="form-group">
+    <label for="ip">Ip</label>
+    <input type="text" class="form-control" id="ip" placeholder="Client IP" ng-model="schedule.ip">
+  </div>
+  <div class="form-group">
+    <label for="time">Time</label>
+    <input type="time" class="form-control" id="time" ng-model="schedule.time">
+  </div>
+  <button type="submit" class="btn btn-primary" ng-click="addSchedule()">Add Schedule</button>
+</form>
 
 </div>

@@ -9,6 +9,7 @@ import shutil
 from Colonize import Colonize
 from flask import Flask, url_for, request, send_from_directory, redirect
 from ThinClient import ThinClient
+from Schedule import Schedule
 from ThinClient import KNOWN_CLIENTS
 from Colonize import REMOTE_CLIENTS_EVENTS
 from ThinClient import serverGlobalConfig
@@ -285,8 +286,37 @@ def api_manageSettings():
 
 @app.route('/api/remoteInstaller', methods=['GET'])
 def api_getRemoteInstallerEvents():
-	response = REMOTE_CLIENTS_EVENTS
+	response = {}
+	response['clients'] = REMOTE_CLIENTS_EVENTS
+	response['schedules'] = Schedule.GetCronSchedules()
 	return json.dumps(response)
+
+@app.route('/api/remoteInstaller', methods=['POST'])
+def api_addRemoteInstallerSchedule():
+	response = {}
+	payload = request.json
+	schedule = Schedule(payload['ip'])
+	schedule.minute = payload['minute']
+	schedule.hour = payload['hour']
+	schedule.AddCronSchedule()
+	response['clients'] = REMOTE_CLIENTS_EVENTS
+	response['schedules'] = Schedule.GetCronSchedules()
+	return json.dumps(response)
+
+@app.route('/api/remoteInstaller', methods=['DELETE'])
+def api_removeRemoteInstallerSchedule():
+	response = {}
+	ip = request.args.get('ip', '')
+	hour = request.args.get('hour', '')
+	minute = request.args.get('minute', '')
+	schedule = Schedule(ip)
+	schedule.minute = minute
+	schedule.hour = hour
+	schedule.RemoveCronSchedule()
+	response['clients'] = REMOTE_CLIENTS_EVENTS
+	response['schedules'] = Schedule.GetCronSchedules()
+	return json.dumps(response)
+
 
 # Helper methods
 def getPayload():
