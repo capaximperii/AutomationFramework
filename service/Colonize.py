@@ -129,10 +129,10 @@ class Zombie:
                             print "Reviving Client", hostname, "since it seems dead"
                             self.doAlchemy(clientInfo)
 
-                if REMOTE_CLIENTS_EVENTS[c] is "Install Failed":
-                    print "Client", REMOTE_CLIENTS[c], "has a failed install, most probably permissions or download url."
+                hostname, clientInfo = REMOTE_CLIENTS[c]
+                if REMOTE_CLIENTS_EVENTS[hostname] is "Install Failed":
+                    print "Client", REMOTE_CLIENTS[hostname], "has a failed install, most probably permissions or download url."
                     print "Removing from monitor list"
-                    hostname, clientInfo = REMOTE_CLIENTS[c]
                     REMOTE_CLIENTS_EVENTS[hostname] = "Removed from monitor list"
                     del REMOTE_CLIENTS[c]
 
