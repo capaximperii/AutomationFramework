@@ -19,7 +19,7 @@ class ThinClient:
 	Constructor  for notional representation of each client
 	"""
 	def __init__(self, address):
-		self.configPath = os.path.join("config", 'clients',"default.ini")
+		self.configPath = os.path.join("config",'profiles',serverGlobalConfig['profile'], 'clients',"default.ini")
 		self.address = address
 		self.testsuite   = self.loadConfig()
 		self.completed   = []
