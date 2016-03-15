@@ -8,6 +8,7 @@
 				Automation Server Statistics for {{client.ip}} 
                     <span class="glyphicon glyphicon-stop" ng-show="isRunning() == true" 
                        ng-click="abort()" style="color:red; cursor: pointer;"></span>
+                       <span class="badge pull-right" ng-show="client.abort">Will abort</span>
 				</h4>
             </div>
             <div class="modal-body">

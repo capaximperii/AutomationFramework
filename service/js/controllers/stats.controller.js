@@ -50,6 +50,7 @@ app.controller('statsCtrl', function ($scope, client, close, StatsResource, Clie
 	}
 
 	$scope.abort = function() {
+		client.abort = true;
 		ClientsResource.delete({ip: client.ip});
 	}
 

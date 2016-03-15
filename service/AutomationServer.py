@@ -153,14 +153,14 @@ def api_getClient():
 				cid = ThinClient.ComputeClientID(ip)
 				client = ThinClient(ip)
 				KNOWN_CLIENTS[cid] = client
-				description = {'ip': client.address, 'history': client.history ,'current': 0 ,'progress': 0}
+				description = {'ip': client.address, 'history': client.history ,'current': 0 ,'progress': 0, 'abort': client.abort}
 				response.append(description)
 	else:
-		response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0 }
+		response = {'ip': 'None', 'history':0, 'current':0 ,'progress':0, 'abort': False }
 		for k in KNOWN_CLIENTS.keys():
 			client = KNOWN_CLIENTS[k]
 			if client.address.startswith(clientId.strip()):
-				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+				response = {'ip': client.address, 'history':client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress(), 'abort': client.abort}
 				break
 	return json.dumps(response)
 
