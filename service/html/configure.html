@@ -38,13 +38,24 @@
                         </div>
                         <div class="col-sm-9 col-md-6 col-lg-8">
                             <h4> Selected Tests 
-				<small> {Click to delete} </small>
-				<small class= "pull-right" ng-click="showMindmapPopup()" style="cursor: pointer">
-					<span class="glyphicon glyphicon-eye-open"></span>
-				</small>
-			    </h4>
+                				<small> {Click for overview} </small>
+                				<small class= "pull-right" ng-click="showMindmapPopup()" style="cursor: pointer">
+                					<span class="glyphicon glyphicon-eye-open"></span>
+                				</small>
+            			    </h4>
                             <div class="list-group">
-                                <button type="button" class="list-group-item" ng-repeat="t in selectedTests | filter: filterTests" ng-click="removeTest(t)">{{t.name}}</button>
+                                <span type="button" class="list-group-item"
+                                    ng-repeat="t in selectedTests | filter: filterTests | orderBy:'rank'">{{t.name}}
+                                    <span class="label label-danger pull-right glyphicon glyphicon-minus"
+                                        ng-click="removeTest(t)">
+                                    </span>
+                                    <span class="label label-info pull-right glyphicon glyphicon-download"
+                                        ng-click="moveDown(t)">
+                                    </span>
+                                    <span class="label label-warning pull-right glyphicon glyphicon-upload"
+                                        ng-click="moveUp(t)">
+                                    </span>
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -104,6 +104,42 @@ app.controller('configureCtrl', function ($scope, close, client, ModalService, T
 			var regExp = new RegExp($scope.filterText, "i");
 			return test.name.match(regExp);
 		}
+
+		function sortSelected () {
+			$scope.selectedTests.sort(function(a, b){
+			return a.rank - b.rank;
+		});
+
+		}
+
+		$scope.moveDown = function(test) {
+			for (var i = 0; i < $scope.selectedTests.length; i ++) {
+				if (test.name == $scope.selectedTests[i].name) {
+					if (i == $scope.selectedTests.length - 1) // we are the last
+						return;
+					var tmprank = $scope.selectedTests[i + 1].rank;
+					$scope.selectedTests[i + 1].rank = test.rank;
+					test.rank = tmprank;
+					sortSelected();
+					break;
+				}
+			}
+		}
+
+		$scope.moveUp = function(test) {
+			for (var i = 0; i < $scope.selectedTests.length; i ++) {
+				if (test.name == $scope.selectedTests[i].name) {
+					if (i == 0) // we are the first
+						return;
+					var tmprank = $scope.selectedTests[i - 1].rank;
+					$scope.selectedTests[i - 1].rank = test.rank;
+					test.rank = tmprank;
+					sortSelected();
+					break;
+				}
+			}
+		}
+
 		$scope.loadAllTests();
 		$scope.findOne(client.ip);
 });
