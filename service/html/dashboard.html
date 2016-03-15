@@ -21,7 +21,7 @@
         </thead>
         <tbody>
             <tr ng-repeat="client in clients">
-            <td>{{ client.ip }} <span ng-show="client.abort" class="badge pull-right">Will abort</span>></td>
+            <td>{{ client.ip }} <span ng-show="client.abort" class="badge pull-right">Will abort</span></td>
                 <td>
                     <a style="cursor: pointer" ng-click="showHistoryPopup(client)" 
                             type="button">{{client.history.length}}
