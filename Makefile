@@ -20,17 +20,17 @@ clean:
 	@echo "Removing py bytecode release and log files."
 	@rm -f $$(find . -name *.pyc)
 	@rm -rf service/storage
-	@rm -rf release
+	@rm -rf service/release
 	@rm -rf logs
 	@rm -rf html
 	@rm -rf tmp
 
 package: clean
-	@mkdir -p release
-	@rm -f release/server.tgz
-	tar zcf release/server.tgz config service agent/cli/bin/sanity.py
-	@rm -f release/agent.tgz
-	tar zcf release/agent.tgz agent
+	@mkdir -p service/release
+	# @rm -f service/release/server.tgz
+	# tar zcf service/release/server.tgz config service agent/cli/bin/sanity.py
+	@rm -f service/release/agent.tgz
+	tar zcf service/release/agent.tgz agent
 	@echo server.tgz and agent.tgz packaged for release
 
 #Reminder: Update checksum whenever selenium is updated in source of this file: sanity.py

@@ -52,6 +52,9 @@ def send_reports(path):
 def send_logs(path):
 	return send_from_directory('service/storage/logs', path)
 
+@app.route('/packages/<path:path>')
+def send_packages(path):
+	return send_from_directory('service/release', path)
 
 # Built-in commands of AutomationFramework
 @app.route('/result', methods=['POST'])
