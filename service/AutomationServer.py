@@ -230,8 +230,9 @@ def api_abort():
 @app.route('/api/server', methods=['GET'])
 def api_getServerLogs():
 	response = ""
-	with open("service/storage/logs/serverlog.txt") as f:
-		response = f.readlines()
+	if os.path.exists("service/storage/logs/serverlog.txt"):
+		with open("service/storage/logs/serverlog.txt") as f:
+			response = f.readlines()
 	return json.dumps(response)
 
 @app.route('/api/stats', methods=['GET'])
