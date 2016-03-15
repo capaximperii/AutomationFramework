@@ -137,7 +137,7 @@ def api_getClient():
 	if(clientId == None):
 		for k in KNOWN_CLIENTS.keys():
 			client = KNOWN_CLIENTS[k]
-			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress()}
+			description = {'ip': client.address, 'history': client.history ,'current': client.GetCurrentTestRank() ,'progress': client.progress(), 'abort': client.abort}
 			response.append(description)
 		configPath = "config/profiles/" + serverGlobalConfig['profile'] +"/clients/"
 		files = [f for f in os.listdir(configPath) if os.path.isfile(os.path.join(configPath, f))]
