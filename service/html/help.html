@@ -15,7 +15,9 @@
 	    </div>
 	    <div class="panel panel-default">
 	      <div class="panel-heading">Server Events</div>
-	      <div class="panel-body">Displays the server logs and the refresh button provides a means to refresh the log content without refreshing the page.</div>
+	      <div class="panel-body">Displays the server logs and the refresh button provides a means to refresh the log content without refreshing the page.
+	      The server logs are enabled by redirecting the output to serverlogs.txt as specified in the Makefile.
+	      </div>
 	    </div>
 	    <div class="panel panel-default">
 	      <div class="panel-heading">Configuration backup and restoration</div>
@@ -24,8 +26,17 @@
 	    </div>
 	    <div class="panel panel-default">
 	      <div class="panel-heading">Global settings</div>
-	      <div class="panel-body">The global settings contain connection parameters used when remote installer is launched. Additionally, it contains profiles available. </div>
+	      	<div class="panel-body">The global settings contain connection parameters used when remote installer is launched. Additionally, it contains profiles available. Profiles are a useful way of separating test cases for different platforms on the same setup. For example a profile for SuSE Linux, and another for ubuntu all derived from the same base root profile. 
+	      	</div>
 	    </div>
+
+	    <div class="panel panel-default">
+	      <div class="panel-heading">Remote installer</div>
+	      	<div class="panel-body">The remote installer displays the status of remotely managed clients. 
+	      	Additionally, there is a facility to configure the cron jobs for scheduling jobs in the future. These jobs are run daily at the specified hour and allows only 1 schedule per IP to prevent clashes.  
+	      	</div>
+	    </div>
+
 	  </div>
 	</div>
 
