@@ -18,7 +18,7 @@ if [ -n "$xte_command" -a -n "$xwininfo_command" ]; then
 	for pattern in $@
 		do
 		rpos=$($visgrep_command $windowimg $pattern)
-		if [ "$wid" -eq "0" ]; then		
+		if [ "$wid" -eq "0" -a -n "$rpos" ]; then		
 			# get pattern position (whole desktop)
 			x2=$(echo $rpos | sed "s/\(.*\),.*/\1/")
 			y2=$(echo $rpos | sed "s/.*,\(.*\) -1/\1/")
