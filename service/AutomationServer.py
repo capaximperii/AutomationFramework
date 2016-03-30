@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import os
+import re
 import sys
 import json
 import select
@@ -321,6 +322,29 @@ def api_removeRemoteInstallerSchedule():
 	response['schedules'] = Schedule.GetCronSchedules()
 	return json.dumps(response)
 
+@app.route('/api/patterns', methods=['GET'])
+def api_patterns():
+	response = {}
+	response['runs'] = {}
+	path = "service/storage/logs/"
+	ips = os.listdir(path)
+	for library in ips:
+		if not os.path.isdir( os.path.join(path, library)):
+			continue
+		books = os.listdir(os.path.join(path, library))
+		for book in books:
+			file = os.path.join(path, library, book)
+			text = open(file, "r")
+			hit_count = 0
+			for line in text:
+				if re.match("(.*)(AF:->)(.*)", line):
+					testSummary = line.split(':->')
+					plainName = testSummary[1].strip()
+					if plainName not in response.keys():
+						response[ plainName ] = 0
+					response[ plainName ] = response[ plainName ] + 1
+			text.close()
+	return json.dumps(response)
 
 # Helper methods
 def getPayload():
