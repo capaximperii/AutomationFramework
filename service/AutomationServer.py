@@ -325,24 +325,28 @@ def api_removeRemoteInstallerSchedule():
 @app.route('/api/patterns', methods=['GET'])
 def api_patterns():
 	response = {}
-	response['runs'] = {}
 	path = "service/storage/logs/"
 	ips = os.listdir(path)
 	for library in ips:
 		if not os.path.isdir( os.path.join(path, library)):
 			continue
+		response[library] = {}
 		books = os.listdir(os.path.join(path, library))
 		for book in books:
 			file = os.path.join(path, library, book)
 			text = open(file, "r")
-			hit_count = 0
 			for line in text:
 				if re.match("(.*)(AF:->)(.*)", line):
 					testSummary = line.split(':->')
 					plainName = testSummary[1].strip()
 					if plainName not in response.keys():
-						response[ plainName ] = 0
-					response[ plainName ] = response[ plainName ] + 1
+						response[library] [plainName] = {'Pass': 0, 'Fail':0, 'Misc': 0}
+					if (testSummary[2].strip() == 'Pass'):
+						response[library][ plainName ]['Pass'] = response[library][plainName]['Pass'] + 1
+					elif (testSummary[2].strip() == 'Fail'):
+						response[library][ plainName ]['Fail'] = response[library][plainName]['Fail'] + 1
+					else:
+						response[library][ plainName ]['Misc'] = response[library][plainName]['Misc'] + 1
 			text.close()
 	return json.dumps(response)
 

@@ -1,0 +1,33 @@
+<div>
+    <H3 style="text-align: center">Reconnaissance</H3>
+	<div class="btn-group pull-right" role="group">
+		<button type="button" class="btn btn-secondary" ng-click="splitView=true">
+			<span class="glyphicon glyphicon-sort-by-attributes"></span>
+		</button>
+		<button type="button" class="btn btn-secondary" ng-click="splitView=false">
+			<span class="glyphicon glyphicon-compressed"></span>
+		</button>
+	</div>
+	<div  class="container">
+	    <nvd3-multi-bar-chart
+	    	ng-if="splitView === true"
+            data="splitData"
+            id="splits"
+            width="800"
+            height="400"
+            showXAxis="true"
+            showYAxis="true">
+        <svg></svg>
+    </nvd3-multi-bar-chart>	    
+    <nvd3-multi-bar-chart
+	    	ng-if="splitView === false"
+            data="consolidatedData"
+            id="consolidated"
+            width="800"
+            height="400"
+            showXAxis="true"
+            showYAxis="true">
+        <svg></svg>
+    </nvd3-multi-bar-chart>
+	</div>
+</div>

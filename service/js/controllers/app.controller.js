@@ -1,4 +1,4 @@
-var app = angular.module('AF', ['ngResource', 'angularModalService', 'ui.router']);
+var app = angular.module('AF', ['ngResource', 'angularModalService', 'ui.router','nvd3ChartDirectives']);
 
 app.controller('MainCtrl', function ($scope, $state) {
 	$state.go('dashboard');
@@ -59,6 +59,15 @@ app.config(function ($stateProvider) {
 				'content@': {
 					templateUrl: '/html/remote.html',
 					controller: 'remoteInstallerCtrl'
+				}
+			}
+		}).state('reconnaissance', {
+			parent: 'menubar-page',
+			url: '/reconnaissance',
+			views: {
+				'content@': {
+					templateUrl: '/html/reconnaissance.html',
+					controller: 'reconnaissanceCtrl'
 				}
 			}
 		}).state('help', {
