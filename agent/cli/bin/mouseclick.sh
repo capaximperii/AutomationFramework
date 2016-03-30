@@ -12,11 +12,12 @@ windowimg=$1
 shift
 mousemove=1
 
-if [ -n "$xte_command" -a -n "$xwininfo_command" ]; then
+if [ -n "$xte_command" ]; then
 	# search for a pattern
 	#rpos=`${visgrep_command} $windowimg $pattern $pattern`
 	for pattern in $@
 		do
+		mousemove=1
 		rpos=$($visgrep_command $windowimg $pattern)
 		if [ "$wid" -eq "0" -a -n "$rpos" ]; then		
 			# get pattern position (whole desktop)
@@ -32,7 +33,7 @@ if [ -n "$xte_command" -a -n "$xwininfo_command" ]; then
 			# wmctrl -k off
 			$xte_command "mousemove $x $y" "sleep 1" "mouseclick 1" "sleep 1"
 			mousemove=0
-		elif [ -n "$rpos" ]; then
+		elif [ -n "$rpos" -a -n "$xwininfo_command" ]; then
 			# get window position
 			x1=$($xwininfo_command -id $wid | awk '/Absolute upper-left X/ {print $NF}')
 			y1=$($xwininfo_command -id $wid | awk '/Absolute upper-left Y/ {print $NF}')
