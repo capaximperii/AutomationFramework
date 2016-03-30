@@ -100,7 +100,9 @@ class AutomationAgent:
             self.url = "/reset/yes"
         elif testresult in ["Skip"]:
             self.url = "/reset/yes"
+        plainName = ''.join([i for i in self.currentTest['name'] if not i.isdigit()])
         self.tee("Sending response: " + testresult)
+        self.tee("AF:-> " + plainName + ":-> " + testresult)
         self.payload = encoded
         self.contactServer()
 
