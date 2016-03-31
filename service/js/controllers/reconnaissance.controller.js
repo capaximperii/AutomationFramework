@@ -5,10 +5,10 @@ app.controller('reconnaissanceCtrl', function ($scope, $state, ReconnaissanceRes
 	$scope.splitView = null;
 
 	$scope.loadAllData = function() {
+		if($scope.splitView === true) return;
 		ReconnaissanceResource.get(function(data) {
 			var consolidated = [];
 			var split = [];
-
 			for (k in data) {
 				var ip = k;
 				var tests = data[ip];
@@ -55,14 +55,27 @@ app.controller('reconnaissanceCtrl', function ($scope, $state, ReconnaissanceRes
 						}
 					}
 				}
-				if ($scope.splitData == null && split.length > 0 && split[0].key != null)
-					$scope.splitData = [{key: split[0].key, values: [ ['Pass', split[0].values[0] ], ['Fail', split[0].values[1]], ['Misc', split[0].values[2]] ] }];
-				if ($scope.consolidatedData == null && consolidated.length > 0 && consolidated[0].key != null)
-					$scope.consolidatedData = [{key: consolidated[0].key, values: [ ['Pass', consolidated[0].values[0]], ['Fail', consolidated[0].values[1]], ['Misc', split[0].values[2]] ]}];
+			}
+			if ($scope.splitData == null && split.length > 0 && split[0].key != null) {
+				var tmp = [];
+				for (var i = 0; i < split.length; i ++)
+					tmp.push ({key: split[i].key, values: [ ['Pass', split[i].values[0] ], ['Fail', split[i].values[1]], ['Misc', split[i].values[2]] ]});
+				$scope.splitData = tmp;
+			}
+			if ($scope.consolidatedData == null && consolidated.length > 0 && consolidated[0].key != null) {
+				var tmp = [];
+				for (var i = 0; i < consolidated.length; i ++)
+					tmp.push({key: consolidated[i].key, values: [ ['Pass', consolidated[i].values[0]], ['Fail', consolidated[i].values[1]], ['Misc', consolidated[i].values[2]] ]});
+				$scope.consolidatedData = tmp;
+			}
+
+			if($scope.consolidatedData != null || $scope.splitData != null) {
 				$scope.splitView = true;
 			}
+
 		});
 	}
+
 
 	$scope.loadAllData();
 });

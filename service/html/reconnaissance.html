@@ -1,5 +1,7 @@
 <div>
     <H3 style="text-align: center">Reconnaissance</H3>
+    <H5 style="text-align: center" ng-if="splitView === true">Grouped by client IP's</H5>
+    <H5 style="text-align: center" ng-if="splitView === false"> Grouped by Test names </H5>
 	<div class="btn-group pull-right" role="group">
 		<button type="button" class="btn btn-secondary" ng-click="splitView=true">
 			<span class="glyphicon glyphicon-sort-by-attributes"></span>
