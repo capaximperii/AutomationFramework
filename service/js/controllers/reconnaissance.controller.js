@@ -27,17 +27,18 @@ app.controller('reconnaissanceCtrl', function ($scope, $state, ReconnaissanceRes
 							}
 						}
 						if (found == false) {
-							split.push({key: ip, values: [ parseInt(tests[label].Pass), parseInt(tests[label].Fail)]});
+							split.push({key: ip, values: [ parseInt(tests[label].Pass), parseInt(tests[label].Fail), parseInt(tests[label].Misc)]});
 						} else {
 							var tmp = split[index].values;
 							tmp[0] += parseInt(tests[label].Pass);
 							tmp[1] += parseInt(tests[label].Fail);
+							tmp[2] += parseInt(tests[label].Misc);
 						}
 
 						/* CONSOLIDATED */
 						var found = false;
 						var index = -1;
-						var values = [parseInt(tests[label].Pass), parseInt(tests[label].Fail)];
+						var values = [parseInt(tests[label].Pass), parseInt(tests[label].Fail), parseInt(tests[label].Misc)];
 						for (var i=0; i<consolidated.length; i++ ) {
 							if (consolidated[i].key == label) {
 								found = true;
@@ -50,16 +51,18 @@ app.controller('reconnaissanceCtrl', function ($scope, $state, ReconnaissanceRes
 							var tmp = consolidated[index].values;
 							tmp[0] += values[0];
 							tmp[1] += values[1];
+							tmp[2] += values[2];
 						}
 					}
 				}
 				if ($scope.splitData == null && split.length > 0 && split[0].key != null)
-					$scope.splitData = [{key: split[0].key, values: [split[0].values, [10,10]]}];
+					$scope.splitData = [{key: split[0].key, values: [ ['Pass', split[0].values[0] ], ['Fail', split[0].values[1]], ['Misc', split[0].values[2]] ] }];
 				if ($scope.consolidatedData == null && consolidated.length > 0 && consolidated[0].key != null)
-					$scope.consolidatedData = [{key: consolidated[0].key, values: [consolidated[0].values, [10,10]]}];
+					$scope.consolidatedData = [{key: consolidated[0].key, values: [ ['Pass', consolidated[0].values[0]], ['Fail', consolidated[0].values[1]], ['Misc', split[0].values[2]] ]}];
 				$scope.splitView = true;
 			}
 		});
 	}
+
 	$scope.loadAllData();
 });
