@@ -3,14 +3,15 @@
     <H5 style="text-align: center" ng-if="splitView === true">Grouped by client IP's</H5>
     <H5 style="text-align: center" ng-if="splitView === false"> Grouped by Test names </H5>
 	<div class="btn-group pull-right" role="group">
-		<button type="button" class="btn btn-secondary" ng-click="splitView=true">
+		<button type="button" class="btn btn-secondary" ng-click="splitView!=null && splitView=true">
 			<span class="glyphicon glyphicon-sort-by-attributes"></span>
 		</button>
-		<button type="button" class="btn btn-secondary" ng-click="splitView=false">
+		<button type="button" class="btn btn-secondary" ng-click="splitView!=null && splitView=false">
 			<span class="glyphicon glyphicon-compressed"></span>
 		</button>
 	</div>
-	<div  class="container">
+	<div class="container">
+		<H3 ng-if="splitView === null" style="text-align: center">No data yet!</H3>
 	    <nvd3-multi-bar-chart
 	    	ng-if="splitView === true"
             data="splitData"
