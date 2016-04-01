@@ -76,6 +76,16 @@ app.controller('reconnaissanceCtrl', function ($scope, $state, ReconnaissanceRes
 		});
 	}
 
+	$scope.setSplitView = function(value) {
+		if ($scope.splitView === null ) return;
+		$scope.splitView = value;
+	}
 
+	$scope.toolTipContentFunction = function(){
+		return function(key, x, y, e, graph) {
+	    	return  '<h3>' + key + '</h3>' +
+	            '<p>' +  parseInt(y) + ' ' + x +'ed' + '</p>'
+		}
+	}
 	$scope.loadAllData();
 });
