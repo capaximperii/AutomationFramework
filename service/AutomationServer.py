@@ -360,7 +360,7 @@ def getPayload():
 		print "Client %s assigned CID %s"%(client, cid)
 		KNOWN_CLIENTS[cid] = ThinClient(client)
 	elif cid in KNOWN_CLIENTS.keys():
-		print "Resuming client from where it last left", client
+		pass
 	arg = json.loads(data)[2]
 	return (cid, arg)
 
