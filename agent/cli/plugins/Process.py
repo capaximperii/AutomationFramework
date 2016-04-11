@@ -15,6 +15,7 @@ class Cli(Console):
             Process spawn PATH...
             Process exec PATH...
             Process forfeit PATH...
+            Process thrive PATH...
             Process kill <name>
             Process alive <name>
             Process dead <name>
@@ -73,6 +74,12 @@ class Cli(Console):
             execopts = "/bin/sh -c '%s' " %(execopts)
             e.EvalRetVal(execopts)
         elif command["forfeit"]:
+            execopts = ' '.join(command["PATH"])
+            e.Log(execopts)
+            execopts = "/bin/sh -c '%s' " %(execopts)
+            e.EvalRetVal(execopts)
+            e.r.setRetVal("Fail")
+        elif command["thrive"]:
             execopts = ' '.join(command["PATH"])
             e.Log(execopts)
             execopts = "/bin/sh -c '%s' " %(execopts)
