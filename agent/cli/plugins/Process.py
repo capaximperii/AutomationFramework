@@ -14,6 +14,7 @@ class Cli(Console):
             Process monitor <name> <duration>
             Process spawn PATH...
             Process exec PATH...
+            Process forfeit PATH...
             Process kill <name>
             Process alive <name>
             Process dead <name>
@@ -22,6 +23,7 @@ class Cli(Console):
 
         Options:
             -h, --help  Show this screen.
+            forfeit execs a process and always returns pass
         """
 
     def parse(self, output):
@@ -70,6 +72,12 @@ class Cli(Console):
             e.Log(execopts)
             execopts = "/bin/sh -c '%s' " %(execopts)
             e.EvalRetVal(execopts)
+        elif command["forfeit"]:
+            execopts = ' '.join(command["PATH"])
+            e.Log(execopts)
+            execopts = "/bin/sh -c '%s' " %(execopts)
+            e.EvalRetVal(execopts)
+            e.r.setRetVal("Pass")
         elif command["alive"]:
             killopts = "/usr/bin/killall -s 0 %s" %(command["<name>"])
             e.Log(killopts)

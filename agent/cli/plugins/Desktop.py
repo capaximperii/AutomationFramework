@@ -15,6 +15,7 @@ class Cli(Console):
             Desktop logout
             Desktop resolution <resolution>
             Desktop screenshot <filename>
+            Desktop legacyScreenshot <filename>
             Desktop windowid <process>
             Desktop windowfocus <windowid>
             Desktop windowclose <windowid>
@@ -45,6 +46,8 @@ class Cli(Console):
             for filename in scrot.save(output="scrot.png", screen=-1):
                 shutil.move("scrot.png", command['<filename>'])
                 e.Log('File: "{}" created.'.format(filename))
+        elif command["legacyScreenshot"]:
+        	os.system("gnome-screenshot -b -f " + command['<filename>'])
         elif command["windowimg"]:
             e.Log("Executing commands for windowimg")
             cmd = 'xte "mousemove 0 0"'
