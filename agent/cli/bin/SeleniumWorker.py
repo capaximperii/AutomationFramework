@@ -32,6 +32,11 @@ class SeleniumWorker:
 			"fillid"  : self.fillElementId,
 			"fillxpath"  : self.fillElementXPath,
 			"counttags"  : self.countTags,
+			"namecontains"  : self.nameContains,
+			"idcontains"  : self.idContains,
+			"csscontains"  : self.cssContains,
+			"xpathcontains"  : self.xpathContains,
+			"pagecontains"  : self.pageContains,
 			"stop"  :  self.driverUnload
 		}
 		self.exit = False
@@ -174,6 +179,40 @@ class SeleniumWorker:
 	def countTags(self, which, what):
 		self.element = self.findElementXPath(which)
 		if len(self.element) == what:
+			return "Pass"
+		return "Fail"
+
+	def idContains(self, which, what):
+		self.element = self.findElementId(which)
+		for e in self.elements:
+			if what in e.text:
+				return "Pass"
+		return "Fail"
+
+	def cssContains(self, which, what):
+		self.element = self.findElementCSS(which)
+		for e in self.elements:
+			if what in e.text:
+				return "Pass"
+		return "Fail"
+
+	def xpathContains(self, which, what):
+		self.element = self.findElementXPath(which)
+		for e in self.elements:
+			if what in e.text:
+				return "Pass"
+		return "Fail"
+
+	def nameContains(self, which, what):
+		self.element = self.findElementName(which)
+		for e in self.elements:
+			if what in e.text:
+				return "Pass"
+		return "Fail"
+
+	def pageContains(self, which, what):
+		page = self.driver.page_source
+		if what in page:
 			return "Pass"
 		return "Fail"
 
