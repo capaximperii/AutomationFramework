@@ -20,6 +20,7 @@ class Cli(Console):
             Process alive <name>
             Process dead <name>
             Process pid <name>
+            Process output contains <expectation> PATH...
             Process (-h | --help | --version)
 
         Options:
@@ -97,6 +98,16 @@ class Cli(Console):
             execopts = "pidof %s" %(command["<name>"])
             e.Log(execopts)
             e.EvalRetVal(execopts)
+        elif command["output"]:
+            #  Process output contains 1360x78  xdpyinfo  | grep dimensions
+            execopts = ' '.join(command["PATH"])
+            e.Log(execopts)
+            execopts = "/bin/sh -c '%s' " %(execopts)
+            output = e.RetOutput(execopts)
+            if command['<expectation>'] in output:
+                e.setExecCodes(execopts, output, "Pass")
+            else:
+                e.setExecCodes(execopts, output, "Fail")
         e.Log(e.r.getOutput())
         print e.r.getRetVal()
 
