@@ -15,5 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from .abstract_event_listener import AbstractEventListener
-from .event_firing_webdriver import EventFiringWebDriver
+from selenium.webdriver.remote.remote_connection import RemoteConnection
+
+class FirefoxRemoteConnection(RemoteConnection):
+
+    def __init__(self, remote_server_addr, keep_alive=True):
+        RemoteConnection.__init__(self, remote_server_addr, keep_alive)
+        self._commands["SET_CONTEXT"] = ('POST',
+                '/session/$sessionId/moz/context')

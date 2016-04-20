@@ -15,28 +15,31 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import base64
-from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
-class WebDriver(RemoteWebDriver):
-    """
-    Simple RemoteWebDriver wrapper to start connect to Selendroid's WebView app
 
-    For more info on getting started with Selendroid
-    http://selendroid.io/mobileWeb.html
-    """
+class Options(object):
 
-    def __init__(self, host="localhost", port=4444, desired_capabilities=DesiredCapabilities.ANDROID):
+    def __init__(self):
+        self._page_load_strategy = "normal"
+
+    @property
+    def page_load_strategy(self):
+        return self._page_load_strategy
+
+    @page_load_strategy.setter
+    def page_load_strategy(self, value):
+        if value not in ['normal', 'eager', 'none']:
+            raise ValueError("Page Load Strategy should be 'normal', 'eager' or 'none'.")
+        self._page_load_strategy = value
+
+    def to_capabilities(self):
         """
-        Creates a new instance of Selendroid using the WebView app
+            Creates a capabilities with all the options that have been set and
 
-        :Args:
-         - host - location of where selendroid is running
-         - port - port that selendroid is running on
-         - desired_capabilities: Dictionary object with capabilities
+            returns a dictionary with everything
         """
-        RemoteWebDriver.__init__(self,
-            command_executor="http://%s:%d/wd/hub" % (host, port),
-            desired_capabilities=desired_capabilities)
+        edge = DesiredCapabilities.EDGE.copy()
+        edge['pageLoadStrategy'] = self._page_load_strategy
 
+        return edge

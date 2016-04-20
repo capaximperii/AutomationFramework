@@ -1,22 +1,32 @@
-# Copyright 2008-2011 WebDriver committers
-# Copyright 2008-2011 Google Inc.
+# Licensed to the Software Freedom Conservancy (SFC) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The SFC licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 
 """
 The Utils methods.
 """
+
 import socket
+from selenium.webdriver.common.keys import Keys
+
+try:
+    basestring
+except NameError:
+    # Python 3
+    basestring = str
 
 
 def free_port():
@@ -24,7 +34,7 @@ def free_port():
     Determines a free port using sockets.
     """
     free_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    free_socket.bind(('127.0.0.1', 0))
+    free_socket.bind(('0.0.0.0', 0))
     free_socket.listen(5)
     port = free_socket.getsockname()[1]
     free_socket.close()
@@ -41,10 +51,12 @@ def is_connectable(port):
         socket_ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_.settimeout(1)
         socket_.connect(("127.0.0.1", port))
-        socket_.close()
-        return True
+        result = True
     except socket.error:
-        return False
+        result = False
+    finally:
+        socket_.close()
+    return result
 
 def is_url_connectable(port):
     """
@@ -67,3 +79,19 @@ def is_url_connectable(port):
             return False
     except:
         return False
+
+
+def keys_to_typing(value):
+    """Processes the values that will be typed in the element."""
+    typing = []
+    for val in value:
+        if isinstance(val, Keys):
+            typing.append(val)
+        elif isinstance(val, int):
+            val = str(val)
+            for i in range(len(val)):
+                typing.append(val[i])
+        else:
+            for i in range(len(val)):
+                typing.append(val[i])
+    return typing

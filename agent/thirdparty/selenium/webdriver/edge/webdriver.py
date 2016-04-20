@@ -15,28 +15,34 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import base64
+from selenium.webdriver.common import utils
 from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from .service import Service
+
 
 class WebDriver(RemoteWebDriver):
-    """
-    Simple RemoteWebDriver wrapper to start connect to Selendroid's WebView app
 
-    For more info on getting started with Selendroid
-    http://selendroid.io/mobileWeb.html
-    """
+    def __init__(self, executable_path='MicrosoftWebDriver.exe',
+                 capabilities=None, port=0):
+        self.port = port
+        if self.port == 0:
+            self.port = utils.free_port()
 
-    def __init__(self, host="localhost", port=4444, desired_capabilities=DesiredCapabilities.ANDROID):
-        """
-        Creates a new instance of Selendroid using the WebView app
+        self.edge_service = Service(executable_path, port=self.port)
+        self.edge_service.start()
 
-        :Args:
-         - host - location of where selendroid is running
-         - port - port that selendroid is running on
-         - desired_capabilities: Dictionary object with capabilities
-        """
-        RemoteWebDriver.__init__(self,
-            command_executor="http://%s:%d/wd/hub" % (host, port),
-            desired_capabilities=desired_capabilities)
+        if capabilities is None:
+            capabilities = DesiredCapabilities.EDGE
 
+        RemoteWebDriver.__init__(
+            self,
+            command_executor=RemoteConnection('http://localhost:%d' % self.port,
+                                              resolve_ip=False),
+            desired_capabilities=capabilities)
+        self._is_remote = False
+
+    def quit(self):
+        RemoteWebDriver.quit(self)
+        self.edge_service.stop()

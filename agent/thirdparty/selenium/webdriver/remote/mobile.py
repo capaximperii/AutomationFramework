@@ -1,16 +1,19 @@
-# Copyright 2014 Software freedom conservancy
+# Licensed to the Software Freedom Conservancy (SFC) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The SFC licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+#   http://www.apache.org/licenses/LICENSE-2.0
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 
 from .command import Command
 from selenium.common.exceptions import WebDriverException
@@ -52,3 +55,23 @@ class Mobile(object):
         return self.ConnectionType(self._driver.execute(Command.SET_NETWORK_CONNECTION,
                                                         {'name':'network_connection',
                                                          'parameters':{'type': mode}})['value'])
+    @property
+    def context(self):
+        """
+        returns the current context (Native or WebView).
+        """
+        return self._driver.execute(Command.CURRENT_CONTEXT_HANDLE)
+
+    @property
+    def contexts(self):
+        """
+        returns a list of available contexts
+        """
+        return self._driver.execute(Command.CONTEXT_HANDLES)
+
+    @context.setter
+    def context(self, new_context):
+        """
+        sets the current context
+        """
+        self._driver.execute(Command.SWITCH_TO_CONTEXT, {"name": new_context})

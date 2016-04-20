@@ -15,5 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-from .abstract_event_listener import AbstractEventListener
-from .event_firing_webdriver import EventFiringWebDriver
+from subprocess import PIPE
+from selenium.webdriver.common import service
+
+class Service(service.Service):
+    def __init__(self, executable_path, port=0, log_file=PIPE):
+        service.Service.__init__(self, executable_path, port=port, log_file=log_file,
+                                 start_error_message="Please download from http://go.microsoft.com/fwlink/?LinkId=619687 ")
+
+    def command_line_args(self):
+        return ["--port=%d" % self.port]
