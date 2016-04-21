@@ -62,12 +62,12 @@ class Colonize:
                 dloadUrl = clientInfo[URL].strip()
                 if hostname in REMOTE_CLIENTS_EVENTS.keys():
                     if REMOTE_CLIENTS_EVENTS[hostname] is "Installing":
-			print "prevented duplicate install"
+                        print "prevented duplicate install"
                         return
                     cid = ThinClient.ComputeClientID(hostname)
                     if cid in KNOWN_CLIENTS.keys():
-                        if KNOWN_CLIENTS[cid].progress() > 0 and KNOWN_CLIENTS[cid].progress() < 100:
-			    print "prevented duplicate install"
+                        if KNOWN_CLIENTS[cid].progress() > 0 and KNOWN_CLIENTS[cid].progress() < 100 and KNOWN_CLIENTS[cid].isZombie() == False:
+                            print "prevented duplicate install"
                             return
                 reset = clientInfo[RESET].strip() == "reset"
                 REMOTE_CLIENTS_EVENTS[hostname] = "Installing"
