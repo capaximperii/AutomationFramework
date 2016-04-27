@@ -80,6 +80,7 @@ class Cli(Console):
         elif command['create'] or command['purge']:
             f = open(path, "w")
             f.close()
+        print e.r.retVal
 
     def do_help(self, arg):
         print self.doc
