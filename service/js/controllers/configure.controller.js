@@ -39,6 +39,7 @@ app.controller('configureCtrl', function ($scope, close, client, ModalService, T
 			}
 		}
 		copy.name = copy.name + '-' + rank
+		copy.rank = rank;
 		$scope.selectedTests.push(copy);
 		$scope.currentTest = null;
 		$scope.variables = [];
