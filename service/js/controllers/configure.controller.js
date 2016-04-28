@@ -29,7 +29,7 @@ app.controller('configureCtrl', function ($scope, close, client, ModalService, T
 
 	$scope.addTest = function() {
 		var rank = $scope.selectedTests.length + 1;
-		var copy = angular.extend({}, $scope.currentTest);
+		var copy = angular.copy($scope.currentTest);
 		for(var i =0; i < $scope.variables.length; i ++ ) {
 			for(var j = 0; j < copy.commands.length; j ++ ) {
 				if(copy.commands[j].lastIndexOf('${', 0) === 0 && copy.commands[j].lastIndexOf('Echo') > 1) {
@@ -40,6 +40,8 @@ app.controller('configureCtrl', function ($scope, close, client, ModalService, T
 		}
 		copy.name = copy.name + '-' + rank
 		$scope.selectedTests.push(copy);
+		$scope.currentTest = null;
+		$scope.variables = [];
 	}
 
 	$scope.removeTest = function(test) {
@@ -50,7 +52,7 @@ app.controller('configureCtrl', function ($scope, close, client, ModalService, T
 	}
 
 	$scope.selectTest = function(test) {
-		$scope.currentTest = test;
+		$scope.currentTest = angular.copy(test);
 		$scope.updateVariablesForTest();
 	}
 
