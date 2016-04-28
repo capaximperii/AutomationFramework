@@ -16,7 +16,7 @@ def CliExecCommand(args):
     module = args.split()[0]
     cmdArgs = " ".join(args.split()[1:])
     importLine = """from plugins import %s as Plugin""" % ( module )
-    execLine   = """prompt.do_%s('%s')""" % ( module, cmdArgs )
+    execLine   = """prompt.do_%s("%s")""" % ( module, cmdArgs )
     store = ResultStore.getResultStore()
     try:
         exec(importLine)
