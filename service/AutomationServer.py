@@ -354,15 +354,19 @@ def api_patterns():
 # Helper methods
 def getPayload():
 	client = request.remote_addr
-	cid = ThinClient.ComputeClientID(client)
 	data = request.get_data()
+	unpack = json.loads(data)
+	if (unpack[0] is not None):
+		cid = json.loads(data)[0]
+	else:
+		cid = ThinClient.ComputeClientID(client)
 	response = "";
 	if cid not in KNOWN_CLIENTS.keys():
 		print "Client %s assigned CID %s"%(client, cid)
 		KNOWN_CLIENTS[cid] = ThinClient(client)
 	elif cid in KNOWN_CLIENTS.keys():
 		pass
-	arg = json.loads(data)[2]
+	arg = unpack[2]
 	return (cid, arg)
 
 def ContactClient(cid, response):
