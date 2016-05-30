@@ -13,7 +13,7 @@ class TestCase:
         self.starttime = None
         self.endtime = None
         self.result = "Pending"
-        self.console = None
+        self.console = ""
         self.details = "Details are not yet available ..."
     
     def toJSON(self):
