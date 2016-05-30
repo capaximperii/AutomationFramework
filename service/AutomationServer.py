@@ -246,7 +246,11 @@ def api_getStats():
 	response['testoutput'] = []
 	for test in client.testsuite:
 		output =  {'name': test.name, 'desc': test.desc, 'commands': "\n".join(test.commands), 'starttime': test.starttime,'endtime': test.endtime, 'console': test.console, 'result': test.result }
-		output['console'] += "\nLogs: \n\n" + str(test.details)
+		if output['console'] == None:
+			output['console'] = "\nLogs: \n\n" + str(test.details)
+		else:
+			output['console'] += "\nLogs: \n\n" + str(test.details)
+
 		response['testoutput'].append(output)
 	return json.dumps(response)
 
