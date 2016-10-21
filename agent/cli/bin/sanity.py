@@ -165,7 +165,7 @@ if __name__=='__main__':
 	#print GetHashofDirDeep("./agent/selenium")  #this is how you get new checksum when source is changed.
 	if os.path.exists("agent"):
 		print "Checking agent install"
-		if GetHashofDirDeep("./agent/thirdparty/selenium") == "13c594f016e9a29a06bb0c5e0fc121d0bc3488ed":
+		if GetHashofDirDeep("./agent/thirdparty/selenium") == "7225a56b44298affa62d43cc64c7858556fd37bf":
 			print "Selenium: Install seems good!"
 		else:
 			print "Selenium install missing? Try running again after make clean"
@@ -193,8 +193,7 @@ if __name__=='__main__':
 		from SuperReport import *
 		from TestCase import TestCase
 		from ThinClient import ThinClient
-		print GetHashofDirShallow("./service")
-		if GetHashofDirShallow("./service") == "9a20446e47a9f2ad4589f1c649cba033dc9a519a":
+		if GetHashofDirShallow("./service") == "c183c7e34b59989564fb565b878062d29ae6d4f1":
 			print "Server: Install seems good!"
 		else:
 			print "Server: New file added of removed? update checksum or try again after make clean"
@@ -202,7 +201,7 @@ if __name__=='__main__':
 
 	if os.path.exists("config"):
 		print "Checking config"
-		if GetHashofDirShallow("config") == "c5d1e007825fbd1754b1d949eb14890e3957916b":
+		if GetHashofDirShallow("config") == "6a17fef32854a9e8d0c1d02da093dd047dea8fd3":
 			print "Config: Install seems good!"
 		else:
 			print "Are you using a custom name for config file? Ignoring checksum mismatch"
