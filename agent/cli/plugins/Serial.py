@@ -13,7 +13,7 @@ class Cli(Console):
         self.doc = """
         Usage:
             Serial command <device> <cmdline> <wait>
-            Serial sendfile <device> <path> <wait>
+            Serial sendfile <device> <cmdline> <path> <wait>
             Serial (-h | --help | --version)
 
         Options:
@@ -39,6 +39,8 @@ class Cli(Console):
                     ser.write(c)
                 while True:
                     buf = ser.read()
+                    sys.stdout.write(buf.decode('utf-8'))
+                    sys.stdout.flush()
                     if command['<wait>'] in buf:
                         break
             pass
@@ -46,6 +48,8 @@ class Cli(Console):
             with Serial(port=command['<device>'], baudrate=115200,
                         stopbits=STOPBITS_TWO, bytesize=EIGHTBITS,
                         parity=PARITY_NONE, dsrdtr=True, rtscts=True) as self.ser:
+                for c in command['<cmdline>']:
+                    self.ser.write(c)
                 modem = XMODEM(self.getc, self.putc)
                 stream = open(command['<path>'], 'rb')
                 modem.send(stream)
