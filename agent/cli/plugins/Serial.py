@@ -25,6 +25,15 @@ class Cli(Console):
     def putc(self, data, timeout=1):
         return self.ser.write(data)
 
+    def readline(self):
+        buf = ''
+        while True:
+            c = self.ser.read()
+            buf += c
+            if c == '\n' or c == '\r':
+                break
+        return buf
+
     def do_Serial(self, args):
         """
         """
@@ -39,8 +48,8 @@ class Cli(Console):
                     self.ser.write(c)
                 self.ser.write(b'\r\n')
                 while True:
-                    buf = self.ser.read()
-                    sys.stdout.write(buf.decode('utf-8'))
+                    buf = self.readline()
+                    print(buf.decode('utf-8'))
                     sys.stdout.flush()
                     if command['<wait>'] in buf:
                         break
@@ -55,8 +64,8 @@ class Cli(Console):
                 stream = open(command['<path>'], 'rb')
                 modem.send(stream)
                 while True:
-                    buf = self.ser.read()
-                    sys.stdout.write(buf.decode('utf-8'))
+                    buf = self.readline()
+                    print(buf.decode('utf-8'))
                     sys.stdout.flush()
                     if command['<wait>'] in buf:
                         break
